@@ -1,4 +1,5 @@
-# HSG-IMP
+# GraphEne
+From **Graph** Sc**Ene** ☝️
 
 ## Installation
 
