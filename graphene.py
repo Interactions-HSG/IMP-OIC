@@ -1,6 +1,6 @@
 import subprocess
 import datetime
-from time import sleep
+from cam import Camera
 
 import networkx as nx
 import json
@@ -10,29 +10,23 @@ class Graphene():
     def __init__(self):
         self.triples = set()
         self.addQueue = set()
+        self.graph_path = "graph.json"
+        self.img_path = "snap.png"
+        self.camera = Camera(device=0, preview=False, threshold=5, export_path=self.img_path)
 
 
     def run(self):
         while(True):
             self.update()
-            sleep(1)
-
-
 
     def update(self):
-        # Get image
-        # TODO
+        # Get image (once the camera returns, we know there was movement, everything is synchronous)
+        self.camera.run()
 
-        # Check whether image content has changed significantly
-        # TODO
-        change = False
+        # Call scene graph generator
+        self.generate_scene_graph("RelTR", self.img_path, self.graph_path)
+        new_triples, dropped_triples = self.read_triples_diff(self.graph_path)
 
-        if not change:
-            return
-
-        graph_path = "graph.json"
-        self.generate_scene_graph()
-        new_triples, dropped_triples = self.read_triples_diff(graph_path)
         # TODO: make better output
         for drop in dropped_triples:
             print(f"{drop.object} {drop.predicate} {drop.subject} has dropped out." )
@@ -40,19 +34,6 @@ class Graphene():
         for new in new_triples:
             print(f"{new.object} {new.predicate} {new.subject} has popped up.")
             self.addQueue.add(new)
-
-
-    def fetch_image(self):
-        pass
-
-    def fetch_image_mock(self):
-        if datetime.now().second < 15:
-            return "image 1"
-        elif datetime.now().second < 30:
-            return "image 2"
-        elif datetime.now().second < 45:
-            return "image 3"
-        else: return "image 4"
 
     def generate_scene_graph(self, reltr_path, img_path, graph_path, device="cpu"):
         subprocess.check_output([f'python',
