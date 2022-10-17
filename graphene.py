@@ -35,7 +35,7 @@ class Graphene():
             print(f"{drop.object} {drop.predicate} {drop.subject} has dropped out." )
 
         for new in new_triples:
-            print(f"{new.object} {new.predicate} {new.subject} has popped up.")
+            print(f"{new.subject} {new.predicate} {new.object} has popped up.")
             self.addQueue.add(new)
 
     def generate_scene_graph(self, reltr_path, img_path, graph_path, device="cpu"):
