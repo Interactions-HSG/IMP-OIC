@@ -77,7 +77,7 @@ class Camera:
 
             if self.movement_detected():
                 self.detection_time = instant
-                print(f"Movement detected at {self.detection_time}")
+                # print(f"Movement detected at {self.detection_time}")
                 self.export_queued = True
 
             if self.export_queued:
@@ -94,9 +94,10 @@ class Camera:
         cv2.imwrite(self.export_path, frame)
 
     def close(self, signum, frame):
-        print("Closing camera")
+        # print("Closing camera")
         self.vc.release()
-        cv2.destroyWindow("preview")
+        if self.preview:
+            cv2.destroyWindow("preview")
 
     def movement_detected(self):
         nb = self.nb_pixels - cv2.countNonZero(self.res)

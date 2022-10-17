@@ -1,8 +1,9 @@
+import os
 import subprocess
-import datetime
+from time import sleep
+
 from cam import Camera
 
-import networkx as nx
 import json
 
 class Graphene():
@@ -22,6 +23,8 @@ class Graphene():
     def update(self):
         # Get image (once the camera returns, we know there was movement, everything is synchronous)
         self.camera.run()
+        print("--------------------")
+        print("Change detected. Generating graph...")
 
         # Call scene graph generator
         self.generate_scene_graph("RelTR", self.img_path, self.graph_path)
@@ -47,17 +50,16 @@ class Graphene():
         """
         Complete import of a graph.
         """
-        triple_dict = None
         triples_read = set()
         with open(graph_path, "r") as file:
             triples = json.load(file)
             file.close()
 
-        for triple_dict in triple_dict:
+        for triple_dict in triples:
             subject = triple_dict["subject"]
-            relation = triple_dict["relation"]
+            predicate = triple_dict["predicate"]
             object = triple_dict["object"]
-            triple = Triple(subject["id"], relation["id"], object["id"])
+            triple = Triple(subject["id"], predicate["id"], object["id"])
             triple.setSubjectBox(subject["xmin"], subject["ymin"], subject["xmax"], subject["ymax"])
             triple.setObjectBox(object["xmin"], object["ymin"], object["xmax"], object["ymax"])
             triples_read.add(triple)
@@ -68,7 +70,8 @@ class Graphene():
         return new_triples, dropped_triples
 
     def visualise(self):
-        g = nx.Graph()
+        # g = nx.Graph()
+        pass
 
 
 class Triple():
@@ -89,3 +92,7 @@ class Triple():
         self.obox = (sxmin, symin, sxmax, symax)
 
 
+if __name__ == "__main__":
+    os.environ['MKL_THREADING_LAYER'] = 'GNU'
+    graphene = Graphene()
+    graphene.run()
