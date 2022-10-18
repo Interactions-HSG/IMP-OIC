@@ -1,6 +1,8 @@
 import os
 import subprocess
-from time import sleep
+import time
+
+import matplotlib.pyplot as plt
 
 from cam import Camera
 
@@ -12,23 +14,24 @@ class Graphene():
         self.triples = set()
         self.addQueue = set()
         self.graph_path = "graph.json"
-        self.img_path = "snap.png"
-        self.camera = Camera(device=0, preview=False, threshold=5, export_path=self.img_path)
+        self.img_path = "snap.jpg"
+        self.camera = None
 
 
     def run(self):
+        self.camera = Camera(device=0, preview=False, threshold=5, export_path=self.img_path)
         while(True):
             self.update()
 
     def update(self):
         # Get image (once the camera returns, we know there was movement, everything is synchronous)
-        self.camera.run()
+        # self.camera.run()
         print("--------------------")
         print("Change detected. Generating graph...")
 
         # Call scene graph generator
-        self.generate_scene_graph("RelTR", self.img_path, self.graph_path)
-        new_triples, dropped_triples = self.read_triples_diff(self.graph_path)
+        # self.generate_scene_graph("RelTR", self.img_path, self.graph_path)
+        new_triples, dropped_triples, read_triples = self.read_triples_diff(self.graph_path)
 
         # TODO: make better output
         for drop in dropped_triples:
@@ -36,7 +39,11 @@ class Graphene():
 
         for new in new_triples:
             print(f"{new.subject} {new.predicate} {new.object} has popped up.")
-            self.addQueue.add(new)
+            # self.addQueue.add(new)
+
+        self.triples = read_triples # currently, we show everything detected
+        self.visualise(self.img_path)
+        time.sleep(2) # when we do not use webcam
 
     def generate_scene_graph(self, reltr_path, img_path, graph_path, device="cpu"):
         subprocess.check_output([f'python',
@@ -67,12 +74,21 @@ class Graphene():
         new_triples = triples_read - self.triples
         dropped_triples = self.triples - triples_read
 
-        return new_triples, dropped_triples
+        return new_triples, dropped_triples, triples_read
 
-    def visualise(self):
-        # g = nx.Graph()
-        pass
-
+    def visualise(self, img_path):
+        fig, ax = plt.subplots()
+        im = plt.imread(img_path)
+        ax.imshow(im)
+        for triple in self.triples:
+            (oxmin, oymin, oxmax, oymax) = triple.obox
+            (sxmin, symin, sxmax, symax) = triple.sbox
+            ax.add_patch(plt.Rectangle((sxmin, symin), sxmax - sxmin, symax - symin,
+                                       fill=False, color='blue', linewidth=2.5))
+            ax.add_patch(plt.Rectangle((oxmin, oymin), oxmax - oxmin, oymax - oymin,
+                                       fill=False, color='orange', linewidth=2.5))
+            ax.set_title(triple.subject + ' ' + triple.predicate + ' ' + triple.object, fontsize=10)
+        plt.show()
 
 class Triple():
 
@@ -89,7 +105,7 @@ class Triple():
         self.obox = (oxmin, oymin, oxmax, oymax)
 
     def setSubjectBox(self, sxmin, symin, sxmax, symax):
-        self.obox = (sxmin, symin, sxmax, symax)
+        self.sbox = (sxmin, symin, sxmax, symax)
 
 
 if __name__ == "__main__":
