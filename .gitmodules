@@ -1,3 +1,6 @@
 [submodule "RelTR"]
 	path = RelTR
 	url = https://github.com/macemoth/RelTR
+[submodule "darknet"]
+	path = darknet
+	url = https://github.com/AlexeyAB/darknet
