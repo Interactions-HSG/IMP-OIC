@@ -1,0 +1,23 @@
+[
+{
+ "frame_id":1, 
+ "filename":"../2398798.jpg", 
+ "objects": [ 
+  {"class_id":64, "name":"mouse", "relative_coordinates":{"center_x":0.279102, "center_y":0.676566, "width":0.049332, "height":0.070894}, "confidence":0.505986}, 
+  {"class_id":64, "name":"mouse", "relative_coordinates":{"center_x":0.072368, "center_y":0.853368, "width":0.122500, "height":0.089164}, "confidence":0.441860}, 
+  {"class_id":64, "name":"mouse", "relative_coordinates":{"center_x":0.338681, "center_y":0.715145, "width":0.063460, "height":0.087660}, "confidence":0.107031}, 
+  {"class_id":63, "name":"laptop", "relative_coordinates":{"center_x":0.486137, "center_y":0.545495, "width":0.182418, "height":0.207409}, "confidence":0.111859}, 
+  {"class_id":0, "name":"person", "relative_coordinates":{"center_x":0.479215, "center_y":0.338272, "width":0.350228, "height":0.503681}, "confidence":0.990866}, 
+  {"class_id":24, "name":"backpack", "relative_coordinates":{"center_x":0.135545, "center_y":0.507770, "width":0.250628, "height":0.122600}, "confidence":0.212375}, 
+  {"class_id":26, "name":"handbag", "relative_coordinates":{"center_x":0.135545, "center_y":0.507770, "width":0.250628, "height":0.122600}, "confidence":0.255796}, 
+  {"class_id":41, "name":"cup", "relative_coordinates":{"center_x":0.874299, "center_y":0.650021, "width":0.073935, "height":0.208503}, "confidence":0.952437}, 
+  {"class_id":41, "name":"cup", "relative_coordinates":{"center_x":0.179977, "center_y":0.760356, "width":0.095196, "height":0.139675}, "confidence":0.258485}, 
+  {"class_id":56, "name":"chair", "relative_coordinates":{"center_x":0.747972, "center_y":0.413843, "width":0.148592, "height":0.176446}, "confidence":0.747485}, 
+  {"class_id":62, "name":"tvmonitor", "relative_coordinates":{"center_x":0.871674, "center_y":0.380721, "width":0.135470, "height":0.346297}, "confidence":0.187656}, 
+  {"class_id":63, "name":"laptop", "relative_coordinates":{"center_x":0.622516, "center_y":0.641747, "width":0.386728, "height":0.402782}, "confidence":0.996848}, 
+  {"class_id":63, "name":"laptop", "relative_coordinates":{"center_x":0.551413, "center_y":0.539917, "width":0.323133, "height":0.245650}, "confidence":0.609379}, 
+  {"class_id":64, "name":"mouse", "relative_coordinates":{"center_x":0.022283, "center_y":0.941137, "width":0.045652, "height":0.101000}, "confidence":0.820687}, 
+  {"class_id":66, "name":"keyboard", "relative_coordinates":{"center_x":0.615369, "center_y":0.737937, "width":0.270576, "height":0.058713}, "confidence":0.166755}
+ ] 
+}
+]
