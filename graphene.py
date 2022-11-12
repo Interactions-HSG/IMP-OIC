@@ -4,6 +4,7 @@ import time
 
 import matplotlib.pyplot as plt
 
+import parser
 from cam import Camera
 
 import json
@@ -29,17 +30,17 @@ class Graphene():
         print("--------------------")
         print("Change detected. Generating graph...")
 
-        # Call scene graph generator
+        # Call scene graph generator and import triples
         # self.generate_scene_graph("RelTR", self.img_path, self.graph_path)
-        new_triples, dropped_triples, read_triples = self.read_triples_diff(self.graph_path)
+        read_triples = parser.parse_triples(self.graph_path)
 
-        # TODO: make better output
-        for drop in dropped_triples:
-            print(f"{drop.object} {drop.predicate} {drop.subject} has dropped out." )
-
-        for new in new_triples:
-            print(f"{new.subject} {new.predicate} {new.object} has popped up.")
-            # self.addQueue.add(new)
+        # # TODO: make better output
+        # for drop in dropped_triples:
+        #     print(f"{drop.object} {drop.predicate} {drop.subject} has dropped out." )
+        #
+        # for new in new_triples:
+        #     print(f"{new.subject} {new.predicate} {new.object} has popped up.")
+        #     # self.addQueue.add(new)
 
         self.triples = read_triples # currently, we show everything detected
         self.visualise(self.img_path)
@@ -53,28 +54,6 @@ class Graphene():
                                  "--resume", f"{reltr_path}/ckpt/checkpoint0149.pth",
                                  "--export_path", f"{graph_path}"])
 
-    def read_triples_diff(self, graph_path):
-        """
-        Complete import of a graph.
-        """
-        triples_read = set()
-        with open(graph_path, "r") as file:
-            triples = json.load(file)
-            file.close()
-
-        for triple_dict in triples:
-            subject = triple_dict["subject"]
-            predicate = triple_dict["predicate"]
-            object = triple_dict["object"]
-            triple = Triple(subject["id"], predicate["id"], object["id"])
-            triple.setSubjectBox(subject["xmin"], subject["ymin"], subject["xmax"], subject["ymax"])
-            triple.setObjectBox(object["xmin"], object["ymin"], object["xmax"], object["ymax"])
-            triples_read.add(triple)
-
-        new_triples = triples_read - self.triples
-        dropped_triples = self.triples - triples_read
-
-        return new_triples, dropped_triples, triples_read
 
     def visualise(self, img_path):
         fig, ax = plt.subplots()
@@ -90,22 +69,7 @@ class Graphene():
             ax.set_title(triple.subject + ' ' + triple.predicate + ' ' + triple.object, fontsize=10)
         plt.show()
 
-class Triple():
 
-    def __init__(self, subject, predicate, object):
-        self.subject = subject
-        self.predicate = predicate
-        self.object = object
-
-    def __hash__(self):
-        """Should only check on S, P, O, but not other variables"""
-        return hash((self.subject, self.predicate, self.object))
-
-    def setObjectBox(self, oxmin, oymin, oxmax, oymax):
-        self.obox = (oxmin, oymin, oxmax, oymax)
-
-    def setSubjectBox(self, sxmin, symin, sxmax, symax):
-        self.sbox = (sxmin, symin, sxmax, symax)
 
 
 if __name__ == "__main__":
