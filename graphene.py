@@ -14,7 +14,7 @@ class Graphene():
     def __init__(self):
         self.triples = set()
         self.addQueue = set()
-        self.graph_path = "graph.json"
+        self.graph_path = "eval/reltr/graph.json"
         self.img_path = "snap.jpg"
         self.camera = None
 
