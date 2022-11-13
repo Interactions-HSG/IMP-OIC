@@ -5,6 +5,14 @@ class SceneTriple():
         self.predicate = predicate
         self.object = SceneObject(object_name, oxmin, oymin, oxmax, oymax)
 
+    @classmethod
+    def from_desc(cls, subject_name, predicate, object_name):
+        return cls(
+            subject_name, 0, 0, 0, 0,
+            predicate,
+            object_name, 0, 0, 0, 0
+        )
+
     def __hash__(self):
         """Should only check on S, P, O, but not other variables"""
         return hash((self.subject, self.predicate, self.object))
@@ -30,6 +38,13 @@ class SceneObject():
             centre_y - h / 2,
             centre_x + w / 2,
             centre_y + h / 2)
+
+    @classmethod
+    def from_desc(cls, name):
+        """
+        Creates object without position
+        """
+        return cls(name, 0, 0, 0, 0)
 
     def __hash__(self):
         """Should only check on S, P, O, but not other variables"""

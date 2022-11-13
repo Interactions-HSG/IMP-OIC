@@ -1,4 +1,6 @@
 import json
+
+from structures.identity import Fingerprint
 from structures.scene import *
 
 def parse_triples(graph_path):
@@ -38,12 +40,55 @@ def parse_objects(objects_path):
             objects.append(SceneObject.from_centre(name, coords["center_x"], coords["center_y"], coords["width"], coords["height"]))
     return objects
 
+def parse_triple_templates(template_path):
+    """
+    Imports fingerprint templates from file
+    """
+    fingerprints = []
+    with open(template_path, "r") as file:
+        templates = json.load(file)
+        file.close()
+
+    for template in templates:
+        subject = SceneObject.from_desc(template["subject"])
+        anchors = []
+        for a in template["anchors"]:
+            anchors.append(SceneTriple.from_desc(a["subject"], a["predicate"], a["object"]))
+        identifier = SceneObject.from_desc(template["identifier"])
+        fingerprints.append(Fingerprint(subject, anchors, identifier))
+    return fingerprints
+
+def parse_object_templates(template_path):
+    """
+    Imports fingerprint templates from file
+    """
+    fingerprints = []
+    with open(template_path, "r") as file:
+        templates = json.load(file)
+        file.close()
+
+    for template in templates:
+        subject = SceneObject.from_desc(template["subject"])
+        anchors = []
+        for a in template["anchors"]:
+            anchors.append(SceneObject.from_desc(a))
+        identifier = SceneObject.from_desc(template["identifier"])
+        fingerprints.append(Fingerprint(subject, anchors, identifier))
+    return fingerprints
 
 if __name__ == "__main__":
-    objects = parse_objects("eval/yolo/2361235.json")
-    for o in objects:
-        print(o)
+    # objects = parse_objects("eval/yolo/2361235.json")
+    # for o in objects:
+    #     print(o)
+    #
+    # triples = parse_triples("eval/reltr/2361235.json")
+    # for t in triples:
+    #     print(t)
 
-    triples = parse_triples("eval/reltr/2361235.json")
-    for t in triples:
-        print(t)
+    fingerprints = parse_triple_templates("templates/triple_templates.json")
+    for f in fingerprints:
+        print(f)
+
+    fingerprints = parse_object_templates("templates/obj_templates.json")
+    for f in fingerprints:
+        print(f)

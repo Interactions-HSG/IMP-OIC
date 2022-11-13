@@ -1,14 +1,26 @@
 import parser
 
+def learn_identity():
+    """
+    Learns a fingerprint by
+    """
+    pass
+
+def identify(environment, truth_source):
+    """
+    Matches the observed environment to known fingerprints
+    """
+    pass
+
+
 # TODO: Think about not returning the target object itself
-def get_local_context(target_object, environment):
+def get_local_context(target_object, environment, epsilon=0.1):
     """
     Takes a single target object and all the objects in its environment.
     Returns a subset of the environment describing the target object's context
     """
     # Currently, we only look at proximity (box around the target object)
     context = []
-    epsilon = 0.1
     # Proximity box with xmin, ymin, xmax, ymax
     proximity_box = (
         max(target_object.xmin - epsilon, 0),
@@ -23,16 +35,15 @@ def get_local_context(target_object, environment):
 
 
 # TODO: Think about not returning the target triple itself
-def get_context_graph(target_object, environment):
+def get_context_graph(target_object, environment, epsilon):
     """
     Takes a single target object and all environment triples.
     Returns a sublist of triples that satisfy (target_triple, ..., ...)
     """
     context = []
-    epsilon = 0.1
     for triple in environment:
         # Direct match
-        if target_object.approximately_same(triple.subject, epsilon):
+        if target_object.approximately_same(triple.subject, epsilon=0.1):
             context.append(triple)
     return context
 
