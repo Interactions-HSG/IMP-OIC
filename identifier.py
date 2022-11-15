@@ -1,17 +1,5 @@
 import parser
 
-def learn_identity():
-    """
-    Learns a fingerprint by
-    """
-    pass
-
-def identify(environment, truth_source):
-    """
-    Matches the observed environment to known fingerprints
-    """
-    pass
-
 
 # TODO: Think about not returning the target object itself
 def get_local_context(target_object, environment, epsilon=0.1):
