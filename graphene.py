@@ -14,7 +14,7 @@ class Graphene():
         self.triples = set()
         self.addQueue = set()
         self.graph_path = "graph.json"
-        self.img_path = "snap.jpg"
+        self.img_path = "snap.png"
         self.camera = None
 
 
@@ -25,12 +25,12 @@ class Graphene():
 
     def update(self):
         # Get image (once the camera returns, we know there was movement, everything is synchronous)
-        # self.camera.run()
+        self.camera.run()
         print("--------------------")
         print("Change detected. Generating graph...")
 
         # Call scene graph generator
-        # self.generate_scene_graph("RelTR", self.img_path, self.graph_path)
+        self.generate_scene_graph("RelTR", self.img_path, self.graph_path)
         new_triples, dropped_triples, read_triples = self.read_triples_diff(self.graph_path)
 
         # TODO: make better output
@@ -43,15 +43,15 @@ class Graphene():
 
         self.triples = read_triples # currently, we show everything detected
         self.visualise(self.img_path)
-        time.sleep(2) # when we do not use webcam
 
-    def generate_scene_graph(self, reltr_path, img_path, graph_path, device="cpu"):
+    def generate_scene_graph(self, reltr_path, img_path, graph_path, device="cpu", topk=5):
         subprocess.check_output([f'python',
                                  f"{reltr_path}/mkgraph.py",
                                  "--img_path", f"{img_path}",
                                  "--device", f"{device}",
                                  "--resume", f"{reltr_path}/ckpt/checkpoint0149.pth",
-                                 "--export_path", f"{graph_path}"])
+                                 "--export_path", f"{graph_path}",
+                                 "--topk", f"{topk}"])
 
     def read_triples_diff(self, graph_path):
         """
@@ -83,11 +83,21 @@ class Graphene():
         for triple in self.triples:
             (oxmin, oymin, oxmax, oymax) = triple.obox
             (sxmin, symin, sxmax, symax) = triple.sbox
+            oxcentre = oxmin + (oxmax-oxmin)/2
+            oycentre = oymin + (oymax-oymin)/2
+            sxcentre = sxmin + (sxmax-sxmin)/2
+            sycentre = symin + (symax-symin)/2
+            xlinecentre = oxcentre + (sxcentre-oxcentre)/2
+            ylinecentre = oycentre + (sycentre-oycentre)/2
             ax.add_patch(plt.Rectangle((sxmin, symin), sxmax - sxmin, symax - symin,
-                                       fill=False, color='blue', linewidth=2.5))
+                                    fill=False, color='blue', linewidth=2.5))
             ax.add_patch(plt.Rectangle((oxmin, oymin), oxmax - oxmin, oymax - oymin,
-                                       fill=False, color='orange', linewidth=2.5))
-            ax.set_title(triple.subject + ' ' + triple.predicate + ' ' + triple.object, fontsize=10)
+                                    fill=False, color='orange', linewidth=2.5))
+            ax.annotate(triple.subject, (sxmin, symin), color="white")
+            ax.annotate(triple.object, (oxmin, oymin), color="white")
+            #ax.add_patch(plt.Arrow((sxcentre, sycentre), (oxcentre, oycentre), color="red"))
+            ax.annotate(triple.predicate, (xlinecentre, ylinecentre), color="white")
+        plt.show(block=False)
         plt.show()
 
 class Triple():
