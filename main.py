@@ -1,12 +1,12 @@
 import identifier
 import parser
 from structures.identity import Fingerprint
+from utils.simulation import FrameGenerator
 
 
 def main():
     templates, templates_classes = import_fingerprints("templates/obj_templates.json")
     template_similarity_thresh = 0.5
-
 
     while(True):
         c = input("\nPress q to leave or enter to identify")
@@ -48,8 +48,16 @@ def main():
             templates_classes.add(new_fingerprint.subject.name)
             templates.append(new_fingerprint)
 
+def mainframes():
+    templates, templates_classes = import_fingerprints("templates/obj_templates.json")
+    template_similarity_thresh = 0.5
 
-        
+    tracked = []
+
+    generator = FrameGenerator(sample=1)
+    # while we receive frames
+    while(generator.has):
+
 
 
 def import_fingerprints(fingerprints_path):

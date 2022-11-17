@@ -11,7 +11,7 @@ class Fingerprint:
     def __str__(self):
         return f"{self.identifier} ({self.subject}) with {len(self.anchors)} anchor(s)"
 
-    def similarity(self, other):
+    def similarity(self, other, ):
         """
         Measures similarity between this fingerprint and another.
         0 is no similarity, 1 is identical
@@ -28,9 +28,12 @@ class Fingerprint:
             sim_score = len(mutual_anchors) / max(len(self.anchors), len(other.anchors))
         return sim_score
 
-    def merge_with(self, other):
-        # TODO: implement this by using subjects and anchors from real fingerprint and identifier from template
-        pass
+
+
+class TemporalFingerprint:
+
+    def __init__(self, identifier):
+        self.identifier = 
 
 
 def test_similarity():
