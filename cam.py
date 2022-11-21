@@ -11,7 +11,7 @@ class Camera:
     Movement detection from: http://www.robindavid.fr/opencv-tutorial/motion-detection-with-opencv.html
     """
 
-    def __init__(self, device=0, preview=False, threshold=8, export_path="snap.png"):
+    def __init__(self, device=0, preview=False, threshold=8, export_path="."):
         self.preview = preview
         self.vc = cv2.VideoCapture(device)
         _, frame = self.vc.read()
@@ -52,7 +52,7 @@ class Camera:
         # Make empty frame at t
         self.frame2gray = np.zeros([self.height, self.width], dtype="uint8")
 
-    def run(self):
+    def run(self, filename):
         if self.preview:
             cv2.namedWindow("Preview")
 
@@ -86,12 +86,13 @@ class Camera:
                 else:
                     self.export_delay_counter = 0
                     self.export_queued = False
-                    self.export_image(frame)
+                    self.export_image(frame, filename)
                     break
             self.frame1gray = self.frame2gray
 
-    def export_image(self, frame):
-        cv2.imwrite(self.export_path, frame)
+    def export_image(self, frame, filename):
+        fname = f"{self.export_path}/{filename}.png"
+        cv2.imwrite(fname, frame)
 
     def close(self, signum, frame):
         # print("Closing camera")

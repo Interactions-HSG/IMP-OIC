@@ -4,7 +4,6 @@ import time
 
 import matplotlib.pyplot as plt
 
-import parser
 from cam import Camera
 
 import json
@@ -15,8 +14,9 @@ class Graphene():
         self.triples = set()
         self.addQueue = set()
         self.graph_path = "eval/reltr/graph.json"
-        self.img_path = "snap.jpg"
+        self.img_path = "."
         self.camera = None
+        self.frame = 0
 
 
     def run(self):
@@ -26,13 +26,14 @@ class Graphene():
 
     def update(self):
         # Get image (once the camera returns, we know there was movement, everything is synchronous)
-        self.camera.run()
+        self.camera.run(self.frame)
+        self.frame += 1
         print("--------------------")
         print("Change detected. Generating graph...")
-
+        
         # Call scene graph generator and import triples
         # self.generate_scene_graph("RelTR", self.img_path, self.graph_path)
-        read_triples = parser.parse_triples(self.graph_path)
+#        read_triples = parser.parse_triples(self.graph_path)
 
         # # TODO: make better output
         # for drop in dropped_triples:
@@ -42,8 +43,8 @@ class Graphene():
         #     print(f"{new.subject} {new.predicate} {new.object} has popped up.")
         #     # self.addQueue.add(new)
 
-        self.triples = read_triples # currently, we show everything detected
-        self.visualise(self.img_path)
+#        self.triples = read_triples # currently, we show everything detected
+#        self.visualise(self.img_path)
 
     def generate_scene_graph(self, reltr_path, img_path, graph_path, device="cpu", topk=5):
         subprocess.check_output([f'python',
