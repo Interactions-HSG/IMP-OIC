@@ -1,3 +1,5 @@
+from utils.inout import *
+
 # TODO: Think about not returning the target object itself
 def get_local_context(target_object, environment, epsilon=0.1):
     """
@@ -20,38 +22,40 @@ def get_local_context(target_object, environment, epsilon=0.1):
 
 
 # TODO: Think about not returning the target triple itself
-def get_context_graph(target_object, environment, epsilon):
+def get_context_graph(target, environment, epsilon):
     """
     Takes a single target object and all environment triples.
     Returns a sublist of triples that satisfy (target_triple, ..., ...)
     """
     context = []
     for triple in environment:
-        # Direct match
-        if target_object.approximately_same(triple.subject, epsilon=0.1):
+        # Direct and reflexive match
+        if target.approximately_same(triple.object, epsilon) or target.approximately_same(triple.subject, epsilon):
             context.append(triple)
     return context
 
 
 def test_get_context_graph():
-    environment = parser.parse_triples("eval/reltr/2361235.json")
-    target = environment[5].subject # paper on desk
-    context = get_context_graph(target, environment)
+    environment = get_triples("eval/reltr/2361235.json")
+    target = environment[5].object # box on desk
+    print("Target: ", target)
+    context = get_context_graph(target, environment, epsilon=0.3)
     for c in context:
         print(c)
 
 
 def test_get_local_context():
-    environment = parser.parse_objects("eval/yolo/2361235.json")
+    environment = get_objects("eval/yolo/2361235.json")
     target = environment[-4] # keyboard
-    context = get_local_context(target, environment)
+    print("Target: ", target)
+    context = get_local_context(target, environment, epsilon=0.1)
     for c in context:
         print(c)
 
 
 if __name__ == "__main__":
-    # test_get_context_graph()
-    test_get_local_context()
+    test_get_context_graph()
+    # test_get_local_context()
 
 
 

@@ -4,7 +4,7 @@ from structures.identity import Fingerprint
 
 
 def main():
-    templates = get_object_templates("templates/obj_templates.json")
+    templates = get_triple_templates("templates/obj_templates.json")
     templates_classes = get_fingerprint_classes(templates)
     template_similarity_thresh = 0.5
 

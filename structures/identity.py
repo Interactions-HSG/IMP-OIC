@@ -11,7 +11,7 @@ class Fingerprint:
     def __str__(self):
         return f"{self.identifier} ({self.subject}) with {len(self.anchors)} anchor(s)"
 
-    def similarity(self, other, ):
+    def similarity(self, other):
         """
         Measures similarity between this fingerprint and another.
         0 is no similarity, 1 is identical
@@ -28,16 +28,24 @@ class Fingerprint:
             sim_score = len(mutual_anchors) / max(len(self.anchors), len(other.anchors))
         return sim_score
 
-
-class TemporalFingerprint:
-
-    def __init__(self, root):
-        self.root = root  # The first fingerprint we detected
-        self.fingerprints = []
-        self.fingerprints.append(root)
-
-    def get_identifier(self):
-        return self.root.name
+    def triple_similarity(self, other, epsilon):
+        """
+        Measures similarity between this fingerprint and another.
+        0 is no similarity, 1 if triples, or their reflexives are approximately_same
+        """
+        sim_score = 0
+        if len(other.anchors) * len(self.anchors) != 0:
+            mutual_anchors = []
+            for a in self.anchors:
+                for b in self.anchors:
+                    if a.object.name == b.object.name or a.subject.name == b.subject.name or\
+                         a.object.name == b.subject.name or a.subject.name == b.object.name:
+                    # Following cannot be used if the location of the fingerprint is not known yet
+                    # if a.object.approximately_same(b.object, epsilon) or a.subject.approximately_same(b.subject, epsilon) or\
+                    #     a.object.approximately_same(b.subject, epsilon) or a.subject.approximately_same(b.object, epsilon):
+                        mutual_anchors.append(a)
+        sim_score = len(mutual_anchors) / max(len(self.anchors), len(other.anchors))
+        return sim_score
 
 
 def test_similarity():
