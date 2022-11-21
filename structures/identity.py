@@ -29,11 +29,15 @@ class Fingerprint:
         return sim_score
 
 
-
 class TemporalFingerprint:
 
-    def __init__(self, identifier):
-        self.identifier = 
+    def __init__(self, root):
+        self.root = root  # The first fingerprint we detected
+        self.fingerprints = []
+        self.fingerprints.append(root)
+
+    def get_identifier(self):
+        return self.root.name
 
 
 def test_similarity():

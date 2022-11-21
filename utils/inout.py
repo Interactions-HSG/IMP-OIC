@@ -3,7 +3,7 @@ import json
 from structures.identity import Fingerprint
 from structures.scene import *
 
-def parse_triples(graph_path):
+def get_triples(graph_path):
     """
     Complete import of a graph created with RelTR
     """
@@ -20,10 +20,11 @@ def parse_triples(graph_path):
                              predicate["id"],
                              object["id"], object["xmin"], object["ymin"], object["xmax"], object["ymax"])
         triples_read.append(triple)
+    print(f"Loaded {len(triples_read)} objects from {graph_path}")
     return triples_read
 
 
-def parse_objects(objects_path):
+def get_objects(objects_path):
     """
     Import of objects created with yolo v4 and --out option
     """
@@ -38,9 +39,10 @@ def parse_objects(objects_path):
             name = obj_dict["name"]
             coords = obj_dict["relative_coordinates"]
             objects.append(SceneObject.from_centre(name, coords["center_x"], coords["center_y"], coords["width"], coords["height"]))
+    print(f"Loaded {len(objects)} objects from {objects_path}")
     return objects
 
-def parse_triple_templates(template_path):
+def get_triple_templates(template_path):
     """
     Imports fingerprint templates from file
     """
@@ -58,7 +60,7 @@ def parse_triple_templates(template_path):
         fingerprints.append(Fingerprint(subject, anchors, identifier))
     return fingerprints
 
-def parse_object_templates(template_path):
+def get_object_templates(template_path):
     """
     Imports fingerprint templates from file
     """
@@ -76,6 +78,24 @@ def parse_object_templates(template_path):
         fingerprints.append(Fingerprint(subject, anchors, identifier))
     return fingerprints
 
+def get_fingerprint_classes(fingerprints):
+    """
+    Convenience function to get a set of class labels (used to swiftly check potential matches)
+    """
+    classes = set()
+    for f in fingerprints:
+        classes.add(f.subject.name)
+    return classes
+
+def export_fingerprints(fingerprints, fingerprints_path):
+    """
+    Exports learned objects with identifier into file
+    """
+    with open(fingerprints_path, "w") as file:
+        for f in fingerprints:
+            pass
+        file.close()
+
 if __name__ == "__main__":
     # objects = parse_objects("eval/yolo/2361235.json")
     # for o in objects:
@@ -85,10 +105,10 @@ if __name__ == "__main__":
     # for t in triples:
     #     print(t)
 
-    fingerprints = parse_triple_templates("templates/triple_templates.json")
+    fingerprints = get_triple_templates("templates/triple_templates.json")
     for f in fingerprints:
         print(f)
 
-    fingerprints = parse_object_templates("templates/obj_templates.json")
+    fingerprints = get_object_templates("templates/obj_templates.json")
     for f in fingerprints:
         print(f)
