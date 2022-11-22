@@ -1,0 +1,13 @@
+[
+  {
+    "subject": "glass",
+    "anchors": [
+      {
+        "subject": "hand",
+        "predicate": "holding",
+        "object": "glass"
+      }
+    ],
+    "identifier": "Marc's Glass"
+  }
+]
