@@ -47,7 +47,7 @@ class FrameGraph():
                 return node
         return subj
 
-    def draw_graph(self):
+    def draw_graph(self, name):
         pos = nx.spring_layout(self.g, seed=7)
 
         edge_width = [len(self.g.get_edge_data(u, v)) for u, v in self.g.edges()]
@@ -64,18 +64,33 @@ class FrameGraph():
         ax.margins(0.1, 0.05)
         plt.axis("off")
         plt.tight_layout()
-        plt.savefig("eval/graphs/lookatthisgraph.png")
+        plt.savefig("eval/graphs/" + name + ".png")
 
     def run(self):
-        path_to_result = "eval/reltr/2398798.json"
-        self.create_graph(path_to_result)
-        print("Graph created!")
-        print(self.g)
-        self.draw_graph()
+        # path_to_result = "eval/reltr/2398798.json"
+        path_to_result1 = "eval/reltr/0.json"
+        self.create_graph(path_to_result1)
+        self.draw_graph("result1")
+        print("Result 1 created! ")
+
+        path_to_result2 = "eval/reltr/1.json"
+        self.create_graph(path_to_result2)
+        self.draw_graph("result2")
+        print("Result 2 created! ")
+
+        path_to_result3 = "eval/reltr/2.json"
+        self.create_graph(path_to_result3)
+        self.draw_graph("result3")
+        print("Result 3 created! ")
+
 
         # open image of graph
-        im = Image.open("eval/graphs/lookatthisgraph.png")
-        im.show()
+        im1 = Image.open("eval/graphs/result1.png")
+        im2 = Image.open("eval/graphs/result2.png")
+        im3 = Image.open("eval/graphs/result3.png")
+        im1.show()
+        im2.show()
+        im3.show()
 
 
 if __name__ == "__main__":
