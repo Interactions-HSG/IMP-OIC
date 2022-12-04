@@ -82,40 +82,79 @@ class FrameGraph:
 class TemporalGraph:
 
     def __init__(self):
-        self.g = nx.DiGraph()
+        self.g = nx.Graph()
+        self.frame_ids = []
 
-    def insert_framegraph(self, framegraph, match_confidence=0.1):
+
+    def insert_framegraph(self, framegraph, match_confidence=0.1, verbose=False):
+        if verbose:
+            print(f"-------------\nInserting framegraph with id {framegraph.frame_id}\n-------------")
+        self.frame_ids.append(framegraph.frame_id)
         temporal_nodes = set(self.g.nodes)
+        f2t = {}  # Maps from FrameNode to node identifier in temporal graph
 
         # TODO: better matching algorithm (look into https://en.wikipedia.org/wiki/Assignment_problem)
-        for f in framegraph.nodes:
-            frame_node = framegraph[f]
+        for f in framegraph.g.nodes():
             best_match = None
             best_similarity = -1
             for t in temporal_nodes:
                 neighbor_matches = 0
                 # Count how many neighbours are shared
-                for nt in nx.neighbors(self.g, t):
-                    for nf in nx.neighbors(framegraph, f):
-                        if self.g[nt]["content"].name == framegraph[nf].name:
-                            neighbor_matches += 1
-                similarity = neighbor_matches / len(nx.neighbors(self.g, t))
+                similarity = 0
+                n_neighbours = len(self.g[t])
+                if n_neighbours > 0:
+                    for nt in self.g[t]:
+                        for nf in framegraph.g[f]:
+                            if self.g.nodes[nt]["content"].name == nf.name:
+                                neighbor_matches += 1
+                    similarity = neighbor_matches / len(self.g[t])
                 if similarity > best_similarity:
                     best_similarity = similarity
                     best_match = t
             # Add or update node
             if best_similarity < match_confidence:
-                node_identifier = f"{frame_node.name}_{uuid.uuid4()}"
-                self.g.add_node(node_identifier, content=frame_node)
+                node_identifier = f"{f.name}_{uuid.uuid4()}"
+                self.g.add_node(node_identifier, content=f)
+                f2t[f] = node_identifier
+                print(f"Creating new node {node_identifier} for {f.name} and confidence {best_similarity}")
             else:
-                self.g[t]["content"] = frame_node
-            temporal_nodes.remove(t) # once assigned, remove for faster lookup
+                self.g.nodes[best_match]["content"] = f
+                temporal_nodes.remove(best_match) # Reduce matching space
+                f2t[f] = best_match
+                print(f"Updating node {best_match} with {f.name} and confidence {best_similarity}")
 
-        for e in framegraph.edges:
+        for n1, n2 in framegraph.g.edges:
+            if framegraph.g[n1][n2]["relation"]:
+                relation = framegraph.g[n1][n2]["relation"]
+            else:
+                relation = "Unknown"
 
+            if (f2t[n1], f2t[n2]) not in self.g.edges: # If edge does not exist
+                d = {framegraph.frame_id: relation}
+                self.g.add_edge(f2t[n1], f2t[n2], relations=d)
+                print(f"Creating new edge {n1} {relation} {n2}") # TODO: add confidence of relation
+            else: # append to edge
+                self.g[f2t[n1]][f2t[n2]]["relations"][framegraph.frame_id] = relation
+                print(f"Updating edge {n1} {relation} {n2}")
+
+
+def test_temporal_graph():
+    fg1 = FrameGraph(1)
+    fg1.create_graph("../eval/reltr/0.json")
+
+    fg2 = FrameGraph(2)
+    fg2.create_graph("../eval/reltr/1.json")
+
+    fg3 = FrameGraph(3)
+    fg3.create_graph("../eval/reltr/2.json")
+
+    tg = TemporalGraph()
+    tg.insert_framegraph(fg1, 0.1, verbose=True)
+    tg.insert_framegraph(fg1, 0.1, verbose=True)
+    tg.insert_framegraph(fg1, 0.1, verbose=True)
 
 
 if __name__ == "__main__":
-    g = FrameGraph(0)
-    g.test_frame_graph()
-
+    # g = FrameGraph(0)
+    # g.test_frame_graph()
+    test_temporal_graph()
