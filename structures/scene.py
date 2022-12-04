@@ -21,7 +21,7 @@ class SceneTriple():
         return f"{self.subject} {self.predicate} {self.object}"
 
 
-class SceneObject():
+class SceneObject:
 
     def __init__(self, name, xmin, ymin, xmax, ymax):
         self.name = name
@@ -59,27 +59,43 @@ class SceneObject():
         """
         return self.xmin > a[0] and self.ymin > a[1] and self.xmax < a[2] and self.ymax < a[3]
 
-    def approximately_same(self, a, epsilon_coef):
+    def approximately_same(self, a, epsilon):
         """
         Returns true if a has the same name and is within epsilon_coef * 100 pahcent of a's box
         """
         if self.name == a.name:
-            return (abs(1 - (self.xmin / a.xmin)) < epsilon_coef) and \
-                   (abs(1 - (self.ymin / a.ymin)) < epsilon_coef) and \
-                   (abs(1 - (self.xmax / a.xmax)) < epsilon_coef) and \
-                   (abs(1 - (self.ymax / a.ymax)) < epsilon_coef)
+            diff = 1 - self.box_similarity(a)
+            return diff < epsilon
         else:
             return False
 
+    def box_similarity(self, other):
+        """
+        Returns fraction of overlap with other to own box. 1 if perfect overlap, 0 if no overlap
+        """
+        a_self = (self.xmax - self.xmin) * (self.ymax - self.ymin)
+        overlap = max(min(self.xmax, other.xmax) - max(self.xmin, other.xmin), 0) * \
+                  max(min(self.ymax, other.ymax) - max(self.ymin, other.ymin), 0)
+        return overlap /a_self
 
 def test_approximately_same():
     phoneA = SceneObject("phone", 399.01727294921875, 159.24984741210938, 462.11737060546875, 212.27130126953125)
     phoneB = SceneObject("phone", 404.1158142089844, 150.51731872558594, 465.4749450683594, 208.5876007080078)
     desk = SceneObject("phone", 329.4053649902344, 189.73760986328125, 423.2495422363281, 230.81634521484375)
 
-    print(phoneA.approximately_same(phoneB, 0.1))  # Should return true
-    print(phoneA.approximately_same(desk, 0.1))  # Should return false
+    print(phoneA.approximately_same(phoneB, 0.3), " with ", 1- phoneA.box_similarity(phoneB))  # Should return true
+    print(phoneA.approximately_same(desk, 0.3), " with ", 1-phoneA.box_similarity(desk))  # Should return false
+
+
+def test_box_overlap():
+    a = SceneObject("a", 399, 159, 462, 212)
+    b = SceneObject("a", 400, 200, 500, 250) # partially overlapping
+    c = SceneObject("a", 464, 214, 500, 300) # no overlapping parts
+    print(a.box_similarity(a)) # should be 1
+    print(a.box_similarity(b))  # should be 0 < x < 1
+    print(a.box_similarity(c))  # should be 0
 
 
 if __name__ == "__main__":
     test_approximately_same()
+    #test_box_overlap()
