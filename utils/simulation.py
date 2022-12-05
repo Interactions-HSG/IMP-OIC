@@ -1,4 +1,3 @@
-
 class FrameGenerator:
     
     def __init__(self):

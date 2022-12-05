@@ -55,17 +55,17 @@ class FrameGraph:
         # path_to_result = "eval/reltr/2398798.json"
         path_to_result1 = "../eval/reltr/0.json"
         self.create_graph(path_to_result1)
-        plot.draw_graph(g, "eval/graphs/result1")
+        plot.draw_graph(self.g, "eval/graphs/result1")
         print("Result 1 created! ")
 
         path_to_result2 = "../eval/reltr/1.json"
         self.create_graph(path_to_result2)
-        plot.draw_graph(g, "eval/graphs/result2")
+        plot.draw_graph(self.g, "eval/graphs/result2")
         print("Result 2 created! ")
 
         path_to_result3 = "../eval/reltr/2.json"
         self.create_graph(path_to_result3)
-        plot.draw_graph(g, "eval/graphs/result3")
+        plot.draw_graph(self.g, "eval/graphs/result3")
         print("Result 3 created! ")
 
         # open image of graph
