@@ -1,6 +1,9 @@
 import networkx as nx
 import json
+
+import utils.plot
 from structures.scene import SceneObject
+import structures.definitions as definitions
 from PIL import Image
 from utils import plot
 import uuid
@@ -84,13 +87,16 @@ class TemporalGraph:
         self.frame_ids = []
 
     def insert_framegraph(self, framegraph, min_assignment_conf=0.1, alpha=0.3, verbose=False):
+        '''
+        Inserts a framegraph into the temporal graph by matching nodes when their similarity is above min_assignment_conf.
+        Similarity is determined by alpha * neighbour similarity + (1-alpha) * spatial similarity
+        '''
         if verbose:
             print(f"-------------\nInserting framegraph with id {framegraph.frame_id}\n-------------")
         self.frame_ids.append(framegraph.frame_id)
         temporal_nodes = set(self.g.nodes)
         f2t = {}  # Maps from FrameNode to node identifier in temporal graph
 
-        # TODO: better matching algorithm (look into https://en.wikipedia.org/wiki/Assignment_problem)
         for f in framegraph.g.nodes():
             best_match = None
             best_similarity = -1
@@ -108,8 +114,12 @@ class TemporalGraph:
                     neigh_similarity = neighbor_matches / len(self.g[t])
 
                 # Compare bounding box similarity
-                spat_similarity = nf.box_similarity(self.g.nodes[nt]["content"]) # TODO: update by centre similarity
-                similarity = alpha * neigh_similarity + (1-alpha) * spat_similarity
+                spat_similarity = f.box_similarity(self.g.nodes[t]["content"])
+
+                # Compare name similarity
+                name_similarity = definitions.name_similarity(f.name, self.g.nodes[t]["content"].name)
+
+                similarity = (alpha * neigh_similarity + (1-alpha) * spat_similarity + name_similarity) / 2
 
                 if similarity > best_similarity:
                     best_similarity = similarity
@@ -153,12 +163,14 @@ def test_temporal_graph():
     fg3.create_graph("../eval/reltr/2.json")
 
     tg = TemporalGraph()
-    tg.insert_framegraph(fg1, 0.1, verbose=True)
-    tg.insert_framegraph(fg2, 0.1, verbose=True)
-    tg.insert_framegraph(fg3, 0.1, verbose=True)
+    tg.insert_framegraph(fg1, 0.1, 0.5, verbose=True)
+    tg.insert_framegraph(fg2, 0.1, 0.5, verbose=True)
+    tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
+    utils.plot.draw_reltr_image("../eval/1.png", "../eval/reltr/1.json")
 
 
 if __name__ == "__main__":
     # g = FrameGraph(0)
     # g.test_frame_graph()
     test_temporal_graph()
+
