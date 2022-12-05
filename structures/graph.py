@@ -83,7 +83,7 @@ class TemporalGraph:
         self.g = nx.Graph()
         self.frame_ids = []
 
-    def insert_framegraph(self, framegraph, match_confidence=0.1, verbose=False):
+    def insert_framegraph(self, framegraph, min_assignment_conf=0.1, alpha=0.3, verbose=False):
         if verbose:
             print(f"-------------\nInserting framegraph with id {framegraph.frame_id}\n-------------")
         self.frame_ids.append(framegraph.frame_id)
@@ -109,14 +109,14 @@ class TemporalGraph:
 
                 # Compare bounding box similarity
                 spat_similarity = nf.box_similarity(self.g.nodes[nt]["content"]) # TODO: update by centre similarity
-                similarity = (neigh_similarity + spat_similarity) / 2
+                similarity = alpha * neigh_similarity + (1-alpha) * spat_similarity
 
                 if similarity > best_similarity:
                     best_similarity = similarity
                     best_match = t
 
             # Add or update node
-            if best_similarity < match_confidence:
+            if best_similarity < min_assignment_conf:
                 node_identifier = f"{f.name}_{uuid.uuid4()}"
                 self.g.add_node(node_identifier, content=f)
                 f2t[f] = node_identifier
