@@ -74,6 +74,20 @@ class SceneObject:
         Returns fraction of overlap with other to own box. 1 if perfect overlap, 0 if no overlap
         """
         a_self = (self.xmax - self.xmin) * (self.ymax - self.ymin)
+        a_other = (other.xmax - other.xmin) * (other.ymax - other.ymin)
+        overlap = max(min(self.xmax, other.xmax) - max(self.xmin, other.xmin), 0) * \
+                  max(min(self.ymax, other.ymax) - max(self.ymin, other.ymin), 0)
+
+        if a_self > a_other:
+            return overlap / a_self
+        else:
+            return overlap / a_other
+
+    def box_overlap(self, other):
+        """
+        Returns fraction of overlap with other to own box. 1 if perfect overlap, 0 if no overlap
+        """
+        a_self = (self.xmax - self.xmin) * (self.ymax - self.ymin)
         overlap = max(min(self.xmax, other.xmax) - max(self.xmin, other.xmin), 0) * \
                   max(min(self.ymax, other.ymax) - max(self.ymin, other.ymin), 0)
         return overlap /a_self
@@ -97,5 +111,5 @@ def test_box_overlap():
 
 
 if __name__ == "__main__":
-    test_approximately_same()
-    #test_box_overlap()
+    # test_approximately_same()
+    test_box_overlap()
