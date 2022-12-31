@@ -1,46 +1,48 @@
 import os
 import subprocess
-import matplotlib.pyplot as plt
+import argparse
 
 from structures.graph import *
 
+TEMP_DIR = "temp"
 
 class Graphene:
     """
         Creates scene graphs on frames / images and can call temporal graph creation
     """
 
-    def __init__(self, path):
-        self.triples = set()
-        self.input_folder_path = path
-        self.output_folder_path = "frames"
+    def __init__(self):
+        self.temp_dir = TEMP_DIR
+        self.tg = TemporalGraph()
 
-    def run(self):
+    def classify_images(self, image_path):
         """
         For all frames (images) in input folder, call scene graph generator
         """
-        images = os.listdir(self.input_folder_path)
+        if os.path.isdir(self.temp_dir):
+            os.rmdir(self.temp_dir)
+        os.mkdir(self.temp_dir)
+
+        images = os.listdir(image_path)
         image_count = 0
         for image in images:
             # check if valid image file
-            if image[-4:] == ".jpg":
-                generate_scene_graph("RelTR", self.input_folder_path + "/" + image,
-                                     self.output_folder_path + "/" + str(image_count) + ".json")
+            if image[-4:] == ".jpg" or image[-5:] == ".jpeg":
+                generate_scene_graph("RelTR", image_path + "/" + image,
+                                     self.temp_dir + "/" + str(image_count) + ".json")
                 image_count += 1
 
-    def generate_temporal_graph(self):
+    def generate_temporal_graph(self, scenegraphs_path):
         """
         For all scene graphs of individual frames, create frame graph and update temporal graph
         """
-        scene_graphs = os.listdir(self.output_folder_path)
+        scene_graphs = os.listdir(scenegraphs_path)
         sg_count = 0
-        tg = TemporalGraph()
         for sg in scene_graphs:
             fg = FrameGraph(sg_count)
-            fg.create_graph(self.output_folder_path + "/" + sg)
+            fg.create_graph(scenegraphs_path + "/" + sg)
+            self.tg.insert_framegraph(fg, 0.1, verbose=True)
             sg_count += 1
-            tg.insert_framegraph(fg, 0.1, verbose=True)
-
 
 def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=5):
     """
@@ -54,11 +56,36 @@ def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=5)
                              "--export_path", f"{graph_path}",
                              "--topk", f"{topk}"])
 
+def main(args):
+    graphene = Graphene()
+    if not os.path.isdir(args.out):
+        os.mkdir(args.out)
+    if args.cam:
+        print("Camera feed is not supported yet")
+        return
+    if args.img_path:
+        graphene.classify_images(args.img_path)
+    if args.graph_path:
+        graph_path = args.graph_path
+    else:
+        graph_path = TEMP_DIR
+    graphene.generate_temporal_graph(graph_path)
+    # TODO: export graph visualisation
+
+    if args.text:
+        text = graphene.tg.to_text()
+        with open(os.join(args.out, "graph_text.txt"), "w") as file:
+            file.write(text)
+            file.close()
+
+
 
 if __name__ == "__main__":
     os.environ['MKL_THREADING_LAYER'] = 'GNU'
-    path_to_images = "test_videos/test0-opencv"
-    graphene = Graphene(path_to_images)
-    # uncomment following line if new test video should be initially parsed
-    # graphene.run()
-    graphene.generate_temporal_graph()
+    parser = argparse.ArgumentParser("Graphene")
+    parser.add_argument("--img_path", type=str)
+    parser.add_argument("--graph_path", type=str)
+    parser.add_argument("--cam", type=bool, default=False)
+    parser.add_argument("--out", type=str, default="out")
+    parser.add_argument("--text", type=bool, default=True)
+    main(parser.parse_args())
