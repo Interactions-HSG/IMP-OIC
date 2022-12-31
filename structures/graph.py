@@ -3,7 +3,7 @@ import json
 
 import utils.plot
 from structures.scene import SceneObject
-import structures.definitions as definitions
+from structures.definitions import name_similarity, convert_to_text
 from PIL import Image
 from utils import plot
 import uuid
@@ -117,9 +117,9 @@ class TemporalGraph:
                 spat_similarity = f.box_similarity(self.g.nodes[t]["content"])
 
                 # Compare name similarity
-                name_similarity = definitions.name_similarity(f.name, self.g.nodes[t]["content"].name)
+                n_similarity = name_similarity(f.name, self.g.nodes[t]["content"].name)
 
-                similarity = (alpha * neigh_similarity + (1-alpha) * spat_similarity + name_similarity) / 2
+                similarity = (alpha * neigh_similarity + (1-alpha) * spat_similarity + n_similarity) / 2
 
                 if similarity > best_similarity:
                     best_similarity = similarity
@@ -127,7 +127,8 @@ class TemporalGraph:
 
             # Add or update node
             if best_similarity < min_assignment_conf:
-                node_identifier = f"{f.name}_{uuid.uuid4()}"
+                uid = str(uuid.uuid4())[0:4]
+                node_identifier = f"{f.name}_{uid}"
                 self.g.add_node(node_identifier, content=f)
                 f2t[f] = node_identifier
                 print(f"Creating new node {node_identifier} for {f.name} and match confidence {best_similarity}")
@@ -151,6 +152,17 @@ class TemporalGraph:
                 self.g[f2t[n1]][f2t[n2]]["relations"][framegraph.frame_id] = relation
                 print(f"Updating edge: {n1} {relation} {n2}")
 
+    def to_text(self):
+        # For each entity, report what happened to it
+        stories = []
+        for n1, n2 in self.g.edges:
+            relations = self.g[n1][n2]["relations"]
+            for (frame, relation) in relations.items():
+                relation_text = convert_to_text(relation)
+                story = f"{n1} {relation_text} {n2} in frame {frame}. "
+                stories.append(story)
+        return "".join(stories)
+
 
 def test_temporal_graph():
     fg1 = FrameGraph(1)
@@ -168,9 +180,26 @@ def test_temporal_graph():
     tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
     utils.plot.draw_reltr_image("../eval/1.png", "../eval/reltr/1.json")
 
+def test_temporal_graph_to_text():
+    fg1 = FrameGraph(1)
+    fg1.create_graph("../eval/reltr/0.json")
+
+    fg2 = FrameGraph(2)
+    fg2.create_graph("../eval/reltr/1.json")
+
+    fg3 = FrameGraph(3)
+    fg3.create_graph("../eval/reltr/2.json")
+
+    tg = TemporalGraph()
+    tg.insert_framegraph(fg1, 0.1, 0.5, verbose=True)
+    tg.insert_framegraph(fg2, 0.1, 0.5, verbose=True)
+    tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
+
+    print(tg.to_text())
 
 if __name__ == "__main__":
     # g = FrameGraph(0)
     # g.test_frame_graph()
-    test_temporal_graph()
+    # test_temporal_graph()
+    test_temporal_graph_to_text()
 
