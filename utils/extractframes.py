@@ -80,6 +80,6 @@ def get_saving_frames_spots(cap, saving_fps):
 
 
 if __name__ == "__main__":
-    video_file = "../test_videos/test0.mp4"
+    video_file = "../eval/img/laptop/test0.mp4"
     f = FrameExtractor(1, video_file)
     f.main()

@@ -56,25 +56,25 @@ class FrameGraph:
 
     def test_frame_graph(self):
         # path_to_result = "eval/reltr/2398798.json"
-        path_to_result1 = "../eval/reltr/0.json"
+        path_to_result1 = "../eval/reltr/glass/0.json"
         self.create_graph(path_to_result1)
         plot.draw_graph(self.g, "eval/graphs/result1")
         print("Result 1 created! ")
 
-        path_to_result2 = "../eval/reltr/1.json"
+        path_to_result2 = "../eval/reltr/glass/1.json"
         self.create_graph(path_to_result2)
         plot.draw_graph(self.g, "eval/graphs/result2")
         print("Result 2 created! ")
 
-        path_to_result3 = "../eval/reltr/2.json"
+        path_to_result3 = "../eval/reltr/glass/2.json"
         self.create_graph(path_to_result3)
         plot.draw_graph(self.g, "eval/graphs/result3")
         print("Result 3 created! ")
 
         # open image of graph
-        im1 = Image.open("../eval/graphs/result1.png")
-        im2 = Image.open("../eval/graphs/result2.png")
-        im3 = Image.open("../eval/graphs/result3.png")
+        im1 = Image.open("../eval/reltr/glass/result1.png")
+        im2 = Image.open("../eval/reltr/glass/result2.png")
+        im3 = Image.open("../eval/reltr/glass/result3.png")
         im1.show()
         im2.show()
         im3.show()
@@ -166,29 +166,29 @@ class TemporalGraph:
 
 def test_temporal_graph():
     fg1 = FrameGraph(1)
-    fg1.create_graph("../eval/reltr/0.json")
+    fg1.create_graph("../eval/reltr/glass/0.json")
 
     fg2 = FrameGraph(2)
-    fg2.create_graph("../eval/reltr/1.json")
+    fg2.create_graph("../eval/reltr/glass/1.json")
 
     fg3 = FrameGraph(3)
-    fg3.create_graph("../eval/reltr/2.json")
+    fg3.create_graph("../eval/reltr/glass/2.json")
 
     tg = TemporalGraph()
     tg.insert_framegraph(fg1, 0.1, 0.5, verbose=True)
     tg.insert_framegraph(fg2, 0.1, 0.5, verbose=True)
     tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
-    utils.plot.draw_reltr_image("../eval/1.png", "../eval/reltr/1.json")
+    utils.plot.draw_reltr_image("../eval/img/glass/1.png", "../eval/reltr/glass/1.json")
 
 def test_temporal_graph_to_text():
     fg1 = FrameGraph(1)
-    fg1.create_graph("../eval/reltr/0.json")
+    fg1.create_graph("../eval/reltr/glass/0.json")
 
     fg2 = FrameGraph(2)
-    fg2.create_graph("../eval/reltr/1.json")
+    fg2.create_graph("../eval/reltr/glass/1.json")
 
     fg3 = FrameGraph(3)
-    fg3.create_graph("../eval/reltr/2.json")
+    fg3.create_graph("../eval/reltr/glass/2.json")
 
     tg = TemporalGraph()
     tg.insert_framegraph(fg1, 0.1, 0.5, verbose=True)

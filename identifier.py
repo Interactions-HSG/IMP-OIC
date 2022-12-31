@@ -36,7 +36,7 @@ def get_context_graph(target, environment, epsilon):
 
 
 def test_get_context_graph():
-    environment = get_triples("eval/reltr/2361235.json")
+    environment = get_triples("eval/reltr/visualgenome/2361235.json")
     target = environment[5].object # box on desk
     print("Target: ", target)
     context = get_context_graph(target, environment, epsilon=0.3)
