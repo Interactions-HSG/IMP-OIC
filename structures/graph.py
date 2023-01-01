@@ -58,23 +58,23 @@ class FrameGraph:
         # path_to_result = "eval/reltr/2398798.json"
         path_to_result1 = "../eval/reltr/glass/0.json"
         self.create_graph(path_to_result1)
-        plot.draw_graph(self.g, "eval/graphs/result1")
+        plot.draw_graph(self.g, "eval/test/result1.png")
         print("Result 1 created! ")
 
         path_to_result2 = "../eval/reltr/glass/1.json"
         self.create_graph(path_to_result2)
-        plot.draw_graph(self.g, "eval/graphs/result2")
+        plot.draw_graph(self.g, "eval/test/result2.png")
         print("Result 2 created! ")
 
         path_to_result3 = "../eval/reltr/glass/2.json"
         self.create_graph(path_to_result3)
-        plot.draw_graph(self.g, "eval/graphs/result3")
+        plot.draw_graph(self.g, "eval/test/result3.png")
         print("Result 3 created! ")
 
         # open image of graph
-        im1 = Image.open("../eval/reltr/glass/result1.png")
-        im2 = Image.open("../eval/reltr/glass/result2.png")
-        im3 = Image.open("../eval/reltr/glass/result3.png")
+        im1 = Image.open("../eval/test/result1.png")
+        im2 = Image.open("../eval/test/result2.png")
+        im3 = Image.open("../eval/test/result3.png")
         im1.show()
         im2.show()
         im3.show()
@@ -152,7 +152,7 @@ class TemporalGraph:
                 self.g[f2t[n1]][f2t[n2]]["relations"][framegraph.frame_id] = relation
                 print(f"Updating edge: {n1} {relation} {n2}")
 
-    def to_text(self):
+    def to_text(self, export_path):
         # For each entity, report what happened to it
         stories = []
         for n1, n2 in self.g.edges:
@@ -161,7 +161,9 @@ class TemporalGraph:
                 relation_text = convert_to_text(relation)
                 story = f"{n1} {relation_text} {n2} in frame {frame}. "
                 stories.append(story)
-        return "".join(stories)
+        with open(export_path, "w") as file:
+            file.write("".join(stories))
+            file.close()
 
 
 def test_temporal_graph():
