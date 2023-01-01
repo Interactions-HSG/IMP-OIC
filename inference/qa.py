@@ -1,4 +1,5 @@
 from tflite_support.task import text
+import os
 
 
 class Bert:
@@ -13,13 +14,18 @@ class Bert:
 
 class Inference:
 
-    def __init__(self, graph):
-        self.graph = graph
-        #self.graph_text = graph.to_text()
+    def __init__(self, context_path):
+        if not os.path.isfile(context_path):
+            print(f"Could not find directory {context_path}")
+            self.context = ""
+        else:
+            with open(context_path, "r") as file:
+                self.context = file.read()
+                file.close()
         self.langmodel = Bert("ckpt/albert_metadata.tflite")
 
     def infer(self, question):
-        if 5 < len(question) < 30:
-            return self.langmodel.answer(self.graph_text, question)
+        if 5 < len(question) < 60:
+            return self.langmodel.answer(self.context, question)
         else:
             return "Search query too short or too large"

@@ -3,20 +3,22 @@ from qa import Inference
 
 app = Flask(__name__)
 app.config.update(SERVER_NAME='127.0.0.1:5000')
-inference = Inference(" ")
+inference = Inference("../out/graph2text.txt")
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/results/', methods=['POST'])
 def search_request():
     query = request.form["input"]
     if len(query.split(" ")) == 0:
         return index()
-    
+
     answer = inference.infer(query)
-    response = {"answer": answer}
+    response = {"question": query, "answer": answer}
     return render_template('results.html', res=response)
 
 
