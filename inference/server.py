@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request
 from qa import Inference
+import os
+import shutil
+
+graph2text = "../out/graph2text.txt"
+tg_plot = "../out/tg.png"
 
 app = Flask(__name__)
 app.config.update(SERVER_NAME='127.0.0.1:5000')
-inference = Inference("../out/graph2text.txt")
 
 
 @app.route('/')
@@ -23,4 +27,7 @@ def search_request():
 
 
 if __name__ == "__main__":
+    inference = Inference(graph2text)
+    if os.path.isfile(tg_plot):
+        shutil.copy(tg_plot, "static/")
     app.run(debug=False)
