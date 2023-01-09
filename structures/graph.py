@@ -215,7 +215,7 @@ class TemporalGraph:
                         if prev_f in self.g.nodes[n]["frames"]: # if node existed in previous frame
                             time_segments.append(((*positions[n], i-1), (*positions[n], i)))
             ax.add_collection3d(Line3DCollection(time_segments, color="k", alpha=0.3, linestyle="--", linewidth=0.5, zorder=2))
-        plt.savefig(export_path, dpi=300)
+        plt.savefig(export_path, dpi=300, bbox_inches="tight")
 
 
 def test_temporal_graph():
