@@ -98,7 +98,9 @@ def main(args):
     else:
         graph_path = TEMP_DIR
     graphene.generate_temporal_graph(graph_path)
-    # TODO: export graph visualisation
+
+    if args.visual:
+        graphene.tg.to_plot(os.path.join(OUT_DIR, args.visual))
 
     if args.text:
         graphene.tg.to_text(os.path.join(OUT_DIR, args.text))
@@ -119,4 +121,6 @@ if __name__ == "__main__":
                         help="The minimum confidence required to match an object from one frame to the next")
     parser.add_argument("--alpha", type=float, default=0.3,
                         help="Sets similarity metrics as alpha * neighbour similarity + (1-alpha) * spatial similarity")
+    parser.add_argument("--visual", type=str,
+                        help="Plots the temporal graph in 3d space")
     main(parser.parse_args())

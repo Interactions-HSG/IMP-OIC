@@ -1,12 +1,15 @@
 import networkx as nx
 import json
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Line3DCollection
+from PIL import Image
+import uuid
+import numpy as np
 
 import utils.plot
 from structures.scene import SceneObject
 from structures.definitions import name_similarity, convert_to_text
-from PIL import Image
 from utils import plot
-import uuid
 
 
 class FrameGraph:
@@ -131,12 +134,14 @@ class TemporalGraph:
                 node_identifier = f"{f.name}_{uid}"
                 self.g.add_node(node_identifier, content=f)
                 f2t[f] = node_identifier
+                self.g.nodes[node_identifier]["frames"] = set()
                 print(f"Creating new node {node_identifier} for {f.name} and match confidence {best_similarity}")
             else:
                 self.g.nodes[best_match]["content"] = f
                 temporal_nodes.remove(best_match)  # Reduce matching space
                 f2t[f] = best_match
                 print(f"Updating node {best_match} with {f.name} and match confidence {best_similarity}")
+            self.g.nodes[f2t[f]]["frames"].add(framegraph.frame_id)
 
         for n1, n2 in framegraph.g.edges:
             if framegraph.g[n1][n2]["relation"]:
@@ -146,11 +151,12 @@ class TemporalGraph:
 
             if (f2t[n1], f2t[n2]) not in self.g.edges:  # If edge does not exist
                 d = {framegraph.frame_id: relation}
-                self.g.add_edge(f2t[n1], f2t[n2], relations=d)  # TODO: add confidence of relation
+                self.g.add_edge(f2t[n1], f2t[n2], relations=d)
                 print(f"Creating new edge: {n1} {relation} {n2}")
             else:  # append to edge
                 self.g[f2t[n1]][f2t[n2]]["relations"][framegraph.frame_id] = relation
                 print(f"Updating edge: {n1} {relation} {n2}")
+
 
     def to_text(self, export_path):
         # For each entity, report what happened to it
@@ -164,6 +170,52 @@ class TemporalGraph:
         with open(export_path, "w") as file:
             file.write("".join(stories))
             file.close()
+
+    def to_plot(self, export_path):
+        """
+        Plots the temporal graph in 3d space.
+        Inspired by https://stackoverflow.com/questions/60392940/multi-layer-graph-in-networkx
+        """
+        fig = plt.figure(figsize=(8, 8))
+        ax = fig.add_subplot(111, projection='3d')
+        ax.set_axis_off()
+        cmap = plt.get_cmap("plasma")
+        colors = cmap(np.linspace(0, 1, len(self.g.nodes)))
+        node2color = dict(zip(self.g.nodes, colors))
+
+        positions = nx.spring_layout(self.g)
+        xmin, ymin = np.min(list(positions.values()), axis=0)
+        xmax, ymax = np.max(list(positions.values()), axis=0)
+
+        for i, f in enumerate(self.frame_ids):
+            # Plot the surface of frame f
+            x = np.linspace(xmin, xmax, 10)
+            y = np.linspace(ymin, ymax, 10)
+            z = np.ones([len(x), len(y)]) * i
+            x, y = np.meshgrid(x, y)
+            ax.plot_surface(x, y, z, alpha=0.2, zorder=1)
+            ax.text(xmin, ymin, i, f"Frame {f}", fontsize="small")
+
+            # Plot edges
+            graph_segments = []
+            for n1, n2 in self.g.edges:
+                if f in self.g[n1][n2]["relations"].keys():  # Check whether edge (n1, n2) exists in frame f
+                    graph_segments.append(((*positions[n1], i), (*positions[n2], i)))
+            ax.add_collection3d(Line3DCollection(graph_segments, color="k", alpha=0.5, linestyle="-", linewidth=0.5, zorder=2))
+
+            # Plot nodes
+            time_segments = []
+            for n in self.g.nodes:
+                if f in self.g.nodes[n]["frames"]:  # Check whether node n exists in frame f
+                    ax.scatter(*positions[n], i, color=node2color[n], s=50, zorder=3)
+                    ax.text(*positions[n], i, n, fontsize='xx-small', horizontalalignment='center', verticalalignment='center', zorder=100)
+                    # Draw edges between frames
+                    if i != 0:
+                        prev_f = self.frame_ids[i-1]
+                        if prev_f in self.g.nodes[n]["frames"]: # if node existed in previous frame
+                            time_segments.append(((*positions[n], i-1), (*positions[n], i)))
+            ax.add_collection3d(Line3DCollection(time_segments, color="k", alpha=0.3, linestyle="--", linewidth=0.5, zorder=2))
+        plt.savefig(export_path, dpi=300)
 
 
 def test_temporal_graph():
@@ -199,9 +251,27 @@ def test_temporal_graph_to_text():
 
     print(tg.to_text())
 
+def test_temporal_graph_to_plot():
+    fg1 = FrameGraph(1)
+    fg1.create_graph("../eval/reltr/glass/0.json")
+
+    fg2 = FrameGraph(2)
+    fg2.create_graph("../eval/reltr/glass/1.json")
+
+    fg3 = FrameGraph(3)
+    fg3.create_graph("../eval/reltr/glass/2.json")
+
+    tg = TemporalGraph()
+    tg.insert_framegraph(fg1, 0.1, 0.5, verbose=True)
+    tg.insert_framegraph(fg2, 0.1, 0.5, verbose=True)
+    tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
+
+    print(tg.to_plot("temporal.png"))
+
 if __name__ == "__main__":
     # g = FrameGraph(0)
     # g.test_frame_graph()
     # test_temporal_graph()
-    test_temporal_graph_to_text()
+    # test_temporal_graph_to_text()
+    test_temporal_graph_to_plot()
 
