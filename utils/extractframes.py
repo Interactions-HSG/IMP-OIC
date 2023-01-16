@@ -2,6 +2,7 @@ from datetime import timedelta
 import cv2
 import numpy as np
 import os
+import sys
 
 
 class FrameExtractor:
@@ -80,6 +81,11 @@ def get_saving_frames_spots(cap, saving_fps):
 
 
 if __name__ == "__main__":
-    video_file = "../eval/img/laptop/test0.mp4"
-    f = FrameExtractor(1, video_file)
+    """
+    First arg: path to video
+    Second arg: How many frames per second
+    """
+    video_file = sys.argv[1]
+    fps_to_save = int(sys.argv[2])
+    f = FrameExtractor(fps_to_save, video_file)
     f.main()

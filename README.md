@@ -1,6 +1,6 @@
 # OIC️
 
-## Installation
+## Installation and usage
 
 ### Submodules
 
@@ -50,5 +50,15 @@ Run `python3 graphene.py --help` for synopsis on graphene
 - Download [Albert](https://tfhub.dev/tensorflow/lite-model/albert_lite_base/squadv1/metadata/1?lite-format=tflite) weights, rename them to `albert_metadata.tflite` and place them into `qa/ckpt`
 - Run `python3 server.py` and open `http://127.0.0.1:5000` in your browser
 
+## Data handling
 
+### Frame extraction
 
+To extract frames from a video, you can use
+```
+python3 utils/extractframes.py path_to_video frames_per_second
+```
+
+### Demo data
+
+We provide demo images and preprocessed frame graphs (to be used with `--graph_path` option) in `eval/img` and `eval/reltr`, respectively.

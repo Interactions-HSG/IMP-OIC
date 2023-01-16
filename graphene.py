@@ -53,6 +53,7 @@ class Graphene:
         image_count = 0
         for image in images:
             # check if valid image file
+            print(f"Processing image {image}")
             if image[-3:] in ["jpg", "png"] or image[-4:] == "jpeg":
                 generate_scene_graph("RelTR", image_path + "/" + image,
                                      self.temp_dir + "/" + str(image_count) + ".json")
