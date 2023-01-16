@@ -171,9 +171,26 @@ class TemporalGraph:
             file.write("".join(stories))
             file.close()
 
+    def to_frame_plot(self, img_path, export_path):
+        """
+        Draws, with the addition of the image, the current framegraph as overlay
+        """
+        fig, ax = plt.subplots()
+        im = plt.imread(img_path)
+        ax.imshow(im)
+        ax.set_axis_off()
+        for n in self.g.nodes():
+            o = self.g.nodes[n]["content"]
+            oxcentre = o.xmin + (o.xmax - o.xmin) / 2
+            oycentre = o.ymin + (o.ymax - o.ymin) / 2
+            ax.add_patch(plt.Rectangle((o.xmin, o.ymin), o.xmax - o.xmin, o.ymax - o.ymin,
+                                       fill=False, color='blue', linewidth=2.5))
+            ax.annotate(n, (o.xmin, o.ymin), color="white")
+        plt.savefig(export_path + ".png")
+
     def to_plot(self, export_path):
         """
-        Plots the temporal graph in 3d space.
+        Plots the temporal graph in 3d space. Works best for < 5 frames.
         Inspired by https://stackoverflow.com/questions/60392940/multi-layer-graph-in-networkx
         """
         fig = plt.figure(figsize=(8, 8))
@@ -214,7 +231,7 @@ class TemporalGraph:
                         prev_f = self.frame_ids[i-1]
                         if prev_f in self.g.nodes[n]["frames"]: # if node existed in previous frame
                             time_segments.append(((*positions[n], i-1), (*positions[n], i)))
-            ax.add_collection3d(Line3DCollection(time_segments, color="k", alpha=0.3, linestyle="--", linewidth=0.5, zorder=2))
+            ax.add_collection3d(Line3DCollection(time_segments, color="k", alpha=0.3, linestyle="--", linewidth=0.5, zorder=2))                  
         plt.savefig(export_path, dpi=300, bbox_inches="tight")
 
 

@@ -1,8 +1,10 @@
 import os
 import subprocess
 import argparse
+import tqdm
 
 from structures.graph import *
+from utils import inout
 from cam import Camera
 
 TEMP_DIR = "temp"
@@ -50,26 +52,45 @@ class Graphene:
         os.mkdir(self.temp_dir)
 
         images = os.listdir(image_path)
+        images = inout.clean_img_list(images)
         image_count = 0
-        for image in images:
-            # check if valid image file
-            print(f"Processing image {image}")
-            if image[-3:] in ["jpg", "png"] or image[-4:] == "jpeg":
-                generate_scene_graph("RelTR", image_path + "/" + image,
-                                     self.temp_dir + "/" + str(image_count) + ".json")
-                image_count += 1
+        for image in tqdm.tqdm(images):
+            generate_scene_graph("RelTR", image_path + "/" + image,
+                                 self.temp_dir + "/" + str(image_count) + ".json")
+            image_count += 1
 
     def generate_temporal_graph(self, scenegraphs_path):
         """
         For all scene graphs of individual frames, create frame graph and update temporal graph
         """
         scene_graphs = os.listdir(scenegraphs_path)
+        scene_graphs = inout.clean_json_list(scene_graphs)
         sg_count = 0
         for sg in scene_graphs:
+            if sg[:-4] == "json":
+                fg = FrameGraph(sg_count)
+                fg.create_graph(scenegraphs_path + "/" + sg)
+                self.tg.insert_framegraph(fg, 0.1, verbose=True)
+                sg_count += 1
+            
+    def generate_temporal_graph_frames(self, scenegraphs_path, image_path):
+        """
+        Identical to generate_temporal_graph, but exports images with graph overlays
+        """
+        scene_graphs = os.listdir(scenegraphs_path)
+        scene_graphs = inout.clean_json_list(scene_graphs)
+        images = os.listdir(image_path)
+        images = inout.clean_img_list(images)
+        ann_path = os.path.join(image_path, "annotated")
+        if not os.path.isdir(ann_path):
+            os.mkdir(ann_path)
+        sg_count = 0
+        for sg, img in zip(scene_graphs, images):
             fg = FrameGraph(sg_count)
-            fg.create_graph(scenegraphs_path + "/" + sg)
+            fg.create_graph(os.path.join(scenegraphs_path, sg))
             self.tg.insert_framegraph(fg, 0.1, verbose=True)
             sg_count += 1
+            self.tg.to_frame_plot(os.path.join(image_path, img), os.path.join(ann_path, str(sg_count)))
 
 
 def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=5):
@@ -87,6 +108,7 @@ def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=5)
 
 def main(args):
     graphene = Graphene()
+
     if not os.path.isdir(OUT_DIR):
         os.mkdir(OUT_DIR)
     if args.cam:
@@ -94,11 +116,11 @@ def main(args):
         return
     if args.img_path:
         graphene.classify_images(args.img_path)
+        graph_path = TEMP_DIR
+        graphene.generate_temporal_graph_frames(graph_path, args.img_path)
     if args.graph_path:
         graph_path = args.graph_path
-    else:
-        graph_path = TEMP_DIR
-    graphene.generate_temporal_graph(graph_path)
+        graphene.generate_temporal_graph(graph_path)
 
     if args.visual:
         graphene.tg.to_plot(os.path.join(OUT_DIR, args.visual))
