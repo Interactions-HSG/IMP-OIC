@@ -56,7 +56,7 @@ class Graphene:
         image_count = 0
         for image in tqdm.tqdm(images):
             generate_scene_graph("RelTR", image_path + "/" + image,
-                                 self.temp_dir + "/" + str(image_count) + ".json")
+                                 self.temp_dir + "/" + "%03d"%image_count + ".json")
             image_count += 1
 
     def generate_temporal_graph(self, scenegraphs_path):
