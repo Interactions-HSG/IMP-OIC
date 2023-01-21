@@ -175,6 +175,9 @@ class TemporalGraph:
         """
         Draws, with the addition of the image, the current framegraph as overlay
         """
+        cmap = plt.get_cmap("plasma")
+        colors = cmap(np.linspace(0, 1, len(self.g.nodes)))
+        node2color = dict(zip(self.g.nodes, colors))
         fig, ax = plt.subplots()
         im = plt.imread(img_path)
         ax.imshow(im)
@@ -184,9 +187,9 @@ class TemporalGraph:
             oxcentre = o.xmin + (o.xmax - o.xmin) / 2
             oycentre = o.ymin + (o.ymax - o.ymin) / 2
             ax.add_patch(plt.Rectangle((o.xmin, o.ymin), o.xmax - o.xmin, o.ymax - o.ymin,
-                                       fill=False, color='blue', linewidth=2.5))
+                                       fill=False, color=node2color[n], linewidth=2.5))
             ax.annotate(n, (o.xmin, o.ymin), color="white")
-        plt.savefig(export_path + ".png")
+        plt.savefig(export_path + ".png", dpi=200, bbox_inches="tight")
 
     def to_plot(self, export_path):
         """
@@ -283,12 +286,22 @@ def test_temporal_graph_to_plot():
     tg.insert_framegraph(fg2, 0.1, 0.5, verbose=True)
     tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
 
-    print(tg.to_plot("temporal.png"))
+    tg.to_plot("temporal.png")
+    
+def test_temporal_graph_to_frame_plot():
+    fg1 = FrameGraph(1)
+    fg1.create_graph("../eval/reltr/airport/0.json")
+
+    tg = TemporalGraph()
+    tg.insert_framegraph(fg1, 0.1, 0.3, verbose=True)
+
+    tg.to_frame_plot("../eval/img/airport/4.jpg", "frameplot")
 
 if __name__ == "__main__":
     # g = FrameGraph(0)
     # g.test_frame_graph()
     # test_temporal_graph()
     # test_temporal_graph_to_text()
-    test_temporal_graph_to_plot()
+    # test_temporal_graph_to_plot()
+    test_temporal_graph_to_frame_plot()
 
