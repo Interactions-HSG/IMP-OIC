@@ -10,7 +10,7 @@ from cam import Camera
 TEMP_DIR = "temp"
 CAM_PATH = "cam"
 OUT_DIR = "out"
-
+min_assignment_conf = 0.6
 
 class Graphene:
     """
@@ -51,7 +51,7 @@ class Graphene:
             os.rmdir(self.temp_dir)
         os.mkdir(self.temp_dir)
 
-        images = os.listdir(image_path)
+        images = sorted(os.listdir(image_path))
         images = inout.clean_img_list(images)
         image_count = 0
         for image in tqdm.tqdm(images):
@@ -63,23 +63,22 @@ class Graphene:
         """
         For all scene graphs of individual frames, create frame graph and update temporal graph
         """
-        scene_graphs = os.listdir(scenegraphs_path)
+        scene_graphs = sorted(os.listdir(scenegraphs_path))
         scene_graphs = inout.clean_json_list(scene_graphs)
         sg_count = 0
         for sg in scene_graphs:
-            if sg[:-4] == "json":
-                fg = FrameGraph(sg_count)
-                fg.create_graph(scenegraphs_path + "/" + sg)
-                self.tg.insert_framegraph(fg, 0.1, verbose=True)
-                sg_count += 1
+            fg = FrameGraph(sg_count)
+            fg.create_graph(scenegraphs_path + "/" + sg)
+            self.tg.insert_framegraph(fg, min_assignment_conf, verbose=True)
+            sg_count += 1
             
     def generate_temporal_graph_frames(self, scenegraphs_path, image_path):
         """
         Identical to generate_temporal_graph, but exports images with graph overlays
         """
-        scene_graphs = os.listdir(scenegraphs_path)
+        scene_graphs = sorted(os.listdir(scenegraphs_path))
         scene_graphs = inout.clean_json_list(scene_graphs)
-        images = os.listdir(image_path)
+        images = sorted(os.listdir(image_path))
         images = inout.clean_img_list(images)
         ann_path = os.path.join(image_path, "annotated")
         if not os.path.isdir(ann_path):
@@ -88,12 +87,12 @@ class Graphene:
         for sg, img in zip(scene_graphs, images):
             fg = FrameGraph(sg_count)
             fg.create_graph(os.path.join(scenegraphs_path, sg))
-            self.tg.insert_framegraph(fg, 0.1, verbose=True)
+            self.tg.insert_framegraph(fg, min_assignment_conf, verbose=True)
+            self.tg.to_frame_plot(os.path.join(image_path, img), os.path.join(ann_path, str(sg_count)), sg_count)
             sg_count += 1
-            self.tg.to_frame_plot(os.path.join(image_path, img), os.path.join(ann_path, str(sg_count)))
 
 
-def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=5):
+def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=7):
     """
     calls RelTR to create scene graph from image and saves json output file in graph path
     """
@@ -120,7 +119,7 @@ def main(args):
         graphene.generate_temporal_graph_frames(graph_path, args.img_path)
     if args.graph_path:
         graph_path = args.graph_path
-        graphene.generate_temporal_graph(graph_path)
+        graphene.generate_temporal_graph_frames(graph_path, "eval/img/airport2")
 
     if args.visual:
         graphene.tg.to_plot(os.path.join(OUT_DIR, args.visual))

@@ -171,23 +171,22 @@ class TemporalGraph:
             file.write("".join(stories))
             file.close()
 
-    def to_frame_plot(self, img_path, export_path):
+    def to_frame_plot(self, img_path, export_path, frame_id):
         """
         Draws, with the addition of the image, the current framegraph as overlay
         """
-        cmap = plt.get_cmap("plasma")
-        colors = cmap(np.linspace(0, 1, len(self.g.nodes)))
-        node2color = dict(zip(self.g.nodes, colors))
         fig, ax = plt.subplots()
         im = plt.imread(img_path)
         ax.imshow(im)
         ax.set_axis_off()
         for n in self.g.nodes():
+            if frame_id not in self.g.nodes[n]["frames"]:
+                continue
             o = self.g.nodes[n]["content"]
             oxcentre = o.xmin + (o.xmax - o.xmin) / 2
             oycentre = o.ymin + (o.ymax - o.ymin) / 2
             ax.add_patch(plt.Rectangle((o.xmin, o.ymin), o.xmax - o.xmin, o.ymax - o.ymin,
-                                       fill=False, color=node2color[n], linewidth=2.5))
+                                       fill=False, color="blue", linewidth=2.5))
             ax.annotate(n, (o.xmin, o.ymin), color="white")
         plt.savefig(export_path + ".png", dpi=200, bbox_inches="tight")
 
