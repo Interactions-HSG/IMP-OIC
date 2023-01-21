@@ -62,3 +62,21 @@ python3 utils/extractframes.py path_to_video frames_per_second
 ### Demo data
 
 We provide demo images and preprocessed frame graphs (to be used with `--graph_path` option) in `eval/img` and `eval/reltr`, respectively.
+
+## Common errors
+
+### Directory not empty: `temp`
+
+**Solution**: Delete the `temp` directory located in the root directory.
+
+The `temp` directory is created for storing the scene graph descriptions obtained from RelTR in JSON format. For tests, they can be directly used with the `--graph_path` option and are not deleted automatically.
+
+### RelTR is not running
+
+Note that RelTR requires Python 3.6 and Tensorflow libraries that are specific for CPU or CUDA-compatible GPUs. Follow the installation instructions of the `RelTR` submodule.
+Note that weights have to be downloaded for RelTR (see installation instructions).
+
+### The QA system does not work
+
+The ALBERT language model is dependent on the `tflite-support` library that requires a Python version newer than ~3.8 and is furthermore not available for Windows.
+Furthermore, it requires a metadata file (see installation instructions).
