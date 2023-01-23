@@ -1,0 +1,663 @@
+ python3 graphene.py --graph_path eval/reltr/desk --min_confidence 0.5
+Creating frame graph...
+-------------
+Inserting framegraph with id 0
+-------------
+Creating new node laptop_c69c for laptop and match confidence -1
+Creating new node desk_4f19 for desk and match confidence -1
+Creating new node bottle_8f26 for bottle and match confidence -1
+Creating new node paper_4874 for paper and match confidence -1
+Creating new node laptop_47af for laptop and match confidence -1
+Creating new node woman_b70b for woman and match confidence -1
+Creating new node glass_f7e6 for glass and match confidence -1
+Creating new node hair_0575 for hair and match confidence -1
+Creating new node screen_4a58 for screen and match confidence -1
+Creating new edge: laptop on desk
+Creating new edge: bottle on desk
+Creating new edge: paper on desk
+Creating new edge: laptop on desk
+Creating new edge: woman wearing glass
+Creating new edge: woman has hair
+Creating new edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 1
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9186443657820065
+Updating node desk_4f19 with desk and match confidence 0.8430362907637445
+Updating node bottle_8f26 with bottle and match confidence 0.9678770093269701
+Updating node paper_4874 with paper and match confidence 0.9774138708093284
+Updating node laptop_47af with laptop and match confidence 0.9755049166296647
+Updating node woman_b70b with woman and match confidence 0.9051002700279724
+Updating node hair_0575 with hair and match confidence 0.8437482709001487
+Updating node screen_4a58 with screen and match confidence 0.987209351118191
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: laptop on desk
+Updating edge: woman has hair
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 2
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9150998534152743
+Updating node desk_4f19 with desk and match confidence 0.8399614301381382
+Updating node bottle_8f26 with bottle and match confidence 0.9865459655092136
+Updating node paper_4874 with paper and match confidence 0.9936354500360415
+Updating node woman_b70b with woman and match confidence 0.913035020991817
+Updating node hair_0575 with hair and match confidence 0.8447640023865288
+Updating node screen_4a58 with screen and match confidence 0.9889406737603946
+Creating new node bottle_fe93 for bottle and match confidence 0.15
+Updating node laptop_47af with laptop and match confidence 0.9690787072777846
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Updating edge: screen on laptop
+Creating new edge: bottle on desk
+Updating edge: laptop on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 3
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9189672223711945
+Updating node desk_4f19 with desk and match confidence 0.8426388215748881
+Updating node bottle_8f26 with bottle and match confidence 0.9849344127978223
+Updating node paper_4874 with paper and match confidence 0.9961803148051483
+Updating node woman_b70b with woman and match confidence 0.9105785138153553
+Updating node hair_0575 with hair and match confidence 0.8419855111166483
+Updating node laptop_47af with laptop and match confidence 0.9854766874053282
+Updating node screen_4a58 with screen and match confidence 0.98923407712229
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Updating edge: laptop on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 4
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9149854840394878
+Updating node desk_4f19 with desk and match confidence 0.8387406534205686
+Updating node bottle_8f26 with bottle and match confidence 0.9806753692416974
+Updating node paper_4874 with paper and match confidence 0.9890583498490786
+Updating node screen_4a58 with screen and match confidence 0.9891245535051327
+Updating node laptop_47af with laptop and match confidence 0.9783049030231867
+Updating node woman_b70b with woman and match confidence 0.8861973847750695
+Updating node hair_0575 with hair and match confidence 0.8341004821861024
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: screen on laptop
+Updating edge: laptop on desk
+Updating edge: woman has hair
+Creating frame graph...
+-------------
+Inserting framegraph with id 5
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9081150495455956
+Updating node desk_4f19 with desk and match confidence 0.843294441489314
+Updating node paper_4874 with paper and match confidence 0.9963550521060053
+Updating node bottle_8f26 with bottle and match confidence 0.9860943528381306
+Updating node screen_4a58 with screen and match confidence 0.9903533859993012
+Updating node woman_b70b with woman and match confidence 0.9627379009854371
+Updating node hair_0575 with hair and match confidence 0.839241548269011
+Updating node glass_f7e6 with glass and match confidence 0.6756860113655935
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: screen on laptop
+Updating edge: woman has hair
+Updating edge: woman wearing glass
+Creating frame graph...
+-------------
+Inserting framegraph with id 6
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9150474717799245
+Updating node desk_4f19 with desk and match confidence 0.8377039902388316
+Updating node paper_4874 with paper and match confidence 0.9951072278096716
+Updating node bottle_8f26 with bottle and match confidence 0.9809535963904196
+Updating node screen_4a58 with screen and match confidence 0.9918068742190338
+Updating node woman_b70b with woman and match confidence 0.9851689144670942
+Updating node hair_0575 with hair and match confidence 0.8261819028037862
+Updating node glass_f7e6 with glass and match confidence 0.7214468845830962
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: screen on laptop
+Updating edge: woman has hair
+Updating edge: woman wearing glass
+Creating frame graph...
+-------------
+Inserting framegraph with id 7
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9196290491275432
+Updating node desk_4f19 with desk and match confidence 0.848964541309436
+Updating node paper_4874 with paper and match confidence 0.9917422806797194
+Updating node bottle_8f26 with bottle and match confidence 0.9655707581296779
+Updating node woman_b70b with woman and match confidence 0.919564044350651
+Updating node hair_0575 with hair and match confidence 0.8386916561642574
+Updating node screen_4a58 with screen and match confidence 0.9915721031305863
+Updating node bottle_fe93 with bottle and match confidence 0.9474412198894864
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: woman has hair
+Updating edge: screen on laptop
+Updating edge: bottle on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 8
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9095511365005007
+Updating node desk_4f19 with desk and match confidence 0.8465894799770065
+Updating node bottle_8f26 with bottle and match confidence 0.9681546638837097
+Updating node paper_4874 with paper and match confidence 0.976847814584892
+Updating node woman_b70b with woman and match confidence 0.9604946423687534
+Updating node hair_0575 with hair and match confidence 0.8291391148966651
+Updating node glass_f7e6 with glass and match confidence 0.7892233414065829
+Updating node screen_4a58 with screen and match confidence 0.9763841552196537
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Updating edge: woman wearing glass
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 9
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9181784786883906
+Updating node desk_4f19 with desk and match confidence 0.8297375302777817
+Updating node bottle_8f26 with bottle and match confidence 0.9761039290779355
+Updating node paper_4874 with paper and match confidence 0.9921085315861795
+Updating node laptop_47af with laptop and match confidence 0.9666654615828092
+Updating node woman_b70b with woman and match confidence 0.9543738523872037
+Updating node hair_0575 with hair and match confidence 0.8203254665915953
+Updating node glass_f7e6 with glass and match confidence 0.64497740917491
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: laptop on desk
+Updating edge: woman has hair
+Updating edge: woman wearing glass
+Creating frame graph...
+-------------
+Inserting framegraph with id 10
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9176419144235421
+Updating node desk_4f19 with desk and match confidence 0.8341515694491597
+Updating node bottle_8f26 with bottle and match confidence 0.9733017496034345
+Updating node paper_4874 with paper and match confidence 0.9908518680382342
+Updating node woman_b70b with woman and match confidence 0.8836401401587224
+Updating node hair_0575 with hair and match confidence 0.8233744169053816
+Updating node screen_4a58 with screen and match confidence 0.9835229070927306
+Updating node laptop_47af with laptop and match confidence 0.9855842157966508
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Updating edge: screen on laptop
+Updating edge: laptop on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 11
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9213432553252179
+Updating node desk_4f19 with desk and match confidence 0.8428882707657002
+Updating node bottle_8f26 with bottle and match confidence 0.9903538979607959
+Updating node paper_4874 with paper and match confidence 0.993718109530489
+Updating node woman_b70b with woman and match confidence 0.9658262282838433
+Updating node hair_0575 with hair and match confidence 0.8109265260625935
+Updating node glass_f7e6 with glass and match confidence 0.5702774500637964
+Updating node laptop_47af with laptop and match confidence 0.9833782287342765
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Updating edge: woman wearing glass
+Updating edge: laptop on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 12
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9189217257740535
+Updating node desk_4f19 with desk and match confidence 0.839662261101634
+Updating node bottle_8f26 with bottle and match confidence 0.9866239641238502
+Updating node paper_4874 with paper and match confidence 0.9933171935542158
+Updating node woman_b70b with woman and match confidence 0.9596516351963353
+Updating node hair_0575 with hair and match confidence 0.7666189760474829
+Updating node glass_f7e6 with glass and match confidence 0.6506166026467125
+Updating node laptop_47af with laptop and match confidence 0.9928168962950861
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Updating edge: woman wearing glass
+Updating edge: laptop on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 13
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9127005208322048
+Updating node desk_4f19 with desk and match confidence 0.8473503282625383
+Updating node bottle_8f26 with bottle and match confidence 0.9751600111311413
+Updating node paper_4874 with paper and match confidence 0.9879903852803998
+Updating node screen_4a58 with screen and match confidence 0.968184061819712
+Updating node woman_b70b with woman and match confidence 0.9131151621592488
+Updating node glass_f7e6 with glass and match confidence 0.5
+Creating new node face_32d4 for face and match confidence 0.04304826431089511
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: screen on laptop
+Updating edge: woman wearing glass
+Creating new edge: glass on face
+Creating frame graph...
+-------------
+Inserting framegraph with id 14
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9190013950939957
+Updating node desk_4f19 with desk and match confidence 0.8456372905887468
+Updating node paper_4874 with paper and match confidence 0.9850142775714043
+Updating node bottle_8f26 with bottle and match confidence 0.9769238637961575
+Updating node laptop_47af with laptop and match confidence 0.9604334290158256
+Updating node screen_4a58 with screen and match confidence 0.977826748328499
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: laptop on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 15
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9178890133145233
+Updating node desk_4f19 with desk and match confidence 0.8485329686604528
+Updating node paper_4874 with paper and match confidence 0.9896305621423949
+Updating node bottle_8f26 with bottle and match confidence 0.9812300115558135
+Updating node laptop_47af with laptop and match confidence 0.9710867700261614
+Updating node screen_4a58 with screen and match confidence 0.9882795055588246
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: laptop on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 16
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.912179482159363
+Updating node desk_4f19 with desk and match confidence 0.8440640835165567
+Updating node paper_4874 with paper and match confidence 0.9900506782446811
+Updating node laptop_47af with laptop and match confidence 0.9710351510953514
+Updating node screen_4a58 with screen and match confidence 0.9892014465451904
+Updating node bottle_8f26 with bottle and match confidence 0.9825028336562879
+Creating new node laptop_1ef8 for laptop and match confidence 0.15
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: laptop on desk
+Updating edge: screen on laptop
+Updating edge: bottle on desk
+Creating new edge: laptop on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 17
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9177553995180735
+Updating node desk_4f19 with desk and match confidence 0.8452575268260127
+Updating node paper_4874 with paper and match confidence 0.981693747512461
+Updating node laptop_47af with laptop and match confidence 0.9689726301833739
+Updating node bottle_8f26 with bottle and match confidence 0.9676605946908311
+Updating node screen_4a58 with screen and match confidence 0.9885656407581658
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 18
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9220567250870773
+Updating node desk_4f19 with desk and match confidence 0.8442006860086826
+Updating node paper_4874 with paper and match confidence 0.9969974534293902
+Updating node bottle_8f26 with bottle and match confidence 0.9913231635886368
+Updating node laptop_47af with laptop and match confidence 0.9805274793583115
+Updating node screen_4a58 with screen and match confidence 0.9852135553162567
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: laptop on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 19
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9088987005973324
+Updating node desk_4f19 with desk and match confidence 0.8466266499237771
+Updating node paper_4874 with paper and match confidence 0.9512325801658089
+Updating node laptop_47af with laptop and match confidence 0.9475131134620796
+Updating node bottle_8f26 with bottle and match confidence 0.9309382249282064
+Updating node screen_4a58 with screen and match confidence 0.9552514403309891
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 20
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9201286439045517
+Updating node desk_4f19 with desk and match confidence 0.8493257600784669
+Updating node paper_4874 with paper and match confidence 0.9902489557063344
+Updating node laptop_47af with laptop and match confidence 0.9807681451151181
+Updating node bottle_8f26 with bottle and match confidence 0.9680177508983292
+Updating node screen_4a58 with screen and match confidence 0.9897287581759296
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: screen on laptop
+/Users/mes/git/HSG-IMP/structures/graph.py:178: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
+  fig, ax = plt.subplots()
+Creating frame graph...
+-------------
+Inserting framegraph with id 21
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9195429655283143
+Updating node desk_4f19 with desk and match confidence 0.8445180635517229
+Updating node paper_4874 with paper and match confidence 0.997623024199329
+Updating node bottle_8f26 with bottle and match confidence 0.9871011491546203
+Updating node laptop_47af with laptop and match confidence 0.9915321081900544
+Updating node screen_4a58 with screen and match confidence 0.9867728358473695
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: laptop on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 22
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.9180938425881874
+Updating node desk_4f19 with desk and match confidence 0.847116480857637
+Updating node laptop_47af with laptop and match confidence 0.9817701245850776
+Updating node bottle_8f26 with bottle and match confidence 0.9871716304992552
+Updating node paper_4874 with paper and match confidence 0.9904045508390041
+Updating node screen_4a58 with screen and match confidence 0.991878128285537
+Updating edge: laptop on desk
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 23
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8355072077282648
+Creating new node table_3879 for table and match confidence 0.3433016532085616
+Updating node bottle_8f26 with bottle and match confidence 0.8302213820435593
+Updating node laptop_47af with laptop and match confidence 0.8405189840289934
+Creating new node man_e7e7 for man and match confidence 0.382279945094065
+Updating node glass_f7e6 with glass and match confidence 0.5
+Updating node screen_4a58 with screen and match confidence 0.982823297008377
+Updating node paper_4874 with paper and match confidence 0.9944550058430628
+Updating node desk_4f19 with desk and match confidence 0.8442871583551841
+Creating new edge: laptop on table
+Creating new edge: bottle on table
+Creating new edge: laptop on table
+Creating new edge: man wearing glass
+Updating edge: screen on laptop
+Updating edge: paper on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 24
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.885446891959875
+Updating node table_3879 with table and match confidence 0.8452439803234303
+Updating node woman_b70b with woman and match confidence 0.9086774889699925
+Updating node glass_f7e6 with glass and match confidence 0.5
+Updating node paper_4874 with paper and match confidence 0.9885317312698425
+Updating node desk_4f19 with desk and match confidence 0.8427835438017484
+Updating node bottle_8f26 with bottle and match confidence 0.8994199735734828
+Updating node hair_0575 with hair and match confidence 0.7885316088665582
+Updating node laptop_47af with laptop and match confidence 0.8966549373328405
+Updating edge: laptop on table
+Updating edge: woman wearing glass
+Updating edge: woman has hair
+Updating edge: paper on desk
+Updating edge: bottle on table
+Updating edge: laptop on table
+Creating frame graph...
+-------------
+Inserting framegraph with id 25
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8873248380737748
+Updating node desk_4f19 with desk and match confidence 0.8381758327346271
+Updating node laptop_47af with laptop and match confidence 0.8968394212434618
+Updating node bottle_8f26 with bottle and match confidence 0.8816302363832218
+Updating node paper_4874 with paper and match confidence 0.9925919417649793
+Updating node woman_b70b with woman and match confidence 0.8804878519373118
+Updating node glass_f7e6 with glass and match confidence 0.532065855894681
+Updating edge: laptop on desk
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman wearing glass
+Creating frame graph...
+-------------
+Inserting framegraph with id 26
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8926913398408483
+Updating node desk_4f19 with desk and match confidence 0.82632182680318
+Updating node bottle_8f26 with bottle and match confidence 0.8936415991482647
+Updating node paper_4874 with paper and match confidence 0.9866036288023546
+Updating node laptop_47af with laptop and match confidence 0.8957588145017576
+Updating node woman_b70b with woman and match confidence 0.9714182824166949
+Updating node hair_0575 with hair and match confidence 0.7232108247656028
+Updating node glass_f7e6 with glass and match confidence 0.6457305086099543
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: laptop on desk
+Updating edge: woman has hair
+Updating edge: woman wearing glass
+Creating frame graph...
+-------------
+Inserting framegraph with id 27
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8861754362690009
+Updating node desk_4f19 with desk and match confidence 0.8407353625684157
+Updating node bottle_8f26 with bottle and match confidence 0.8911918566002133
+Updating node paper_4874 with paper and match confidence 0.9890682576124235
+Updating node woman_b70b with woman and match confidence 0.916846126949191
+Updating node hair_0575 with hair and match confidence 0.8225470224371019
+Updating node screen_4a58 with screen and match confidence 0.9719309364385049
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Creating new edge: woman using laptop
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 28
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8757423742211563
+Updating node desk_4f19 with desk and match confidence 0.8485241036112576
+Updating node bottle_8f26 with bottle and match confidence 0.9044322675975737
+Updating node paper_4874 with paper and match confidence 0.9937293010608179
+Updating node woman_b70b with woman and match confidence 0.986308565003107
+Updating node hair_0575 with hair and match confidence 0.8364801571845257
+Updating node glass_f7e6 with glass and match confidence 0.5994064939343997
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Updating edge: woman wearing glass
+Updating edge: woman using laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 29
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8717935197779367
+Updating node desk_4f19 with desk and match confidence 0.8357812714371449
+Updating node bottle_8f26 with bottle and match confidence 0.9031756018444175
+Updating node paper_4874 with paper and match confidence 0.9945630430559412
+Updating node woman_b70b with woman and match confidence 0.8760470072457243
+Updating node hair_0575 with hair and match confidence 0.8168249655925283
+Updating node laptop_47af with laptop and match confidence 0.8971482996266662
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Updating edge: laptop on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 30
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8813707284411865
+Updating node desk_4f19 with desk and match confidence 0.8248046897413781
+Updating node bottle_8f26 with bottle and match confidence 0.9115310063454514
+Updating node laptop_47af with laptop and match confidence 0.8966294637983516
+Updating node paper_4874 with paper and match confidence 0.9978977193033819
+Updating node woman_b70b with woman and match confidence 0.8619300293028556
+Updating node hair_0575 with hair and match confidence 0.8024178594661517
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: woman has hair
+Creating frame graph...
+-------------
+Inserting framegraph with id 31
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8742762236053225
+Updating node desk_4f19 with desk and match confidence 0.8369128878491514
+Updating node bottle_8f26 with bottle and match confidence 0.9109013634191525
+Updating node woman_b70b with woman and match confidence 0.9185138896164953
+Updating node glass_f7e6 with glass and match confidence 0.5
+Updating node hair_0575 with hair and match confidence 0.7804657890241931
+Updating node paper_4874 with paper and match confidence 0.9922551913596169
+Updating node screen_4a58 with screen and match confidence 0.9896587980180375
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: woman wearing glass
+Updating edge: woman has hair
+Updating edge: paper on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 32
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8770963876658742
+Updating node desk_4f19 with desk and match confidence 0.8474328244364078
+Updating node woman_b70b with woman and match confidence 0.8719352718521688
+Updating node glass_f7e6 with glass and match confidence 0.5623778753771779
+Updating node bottle_8f26 with bottle and match confidence 0.9143424816742763
+Updating node paper_4874 with paper and match confidence 0.9963320376389816
+Updating node laptop_47af with laptop and match confidence 0.9096272790469624
+Updating node screen_4a58 with screen and match confidence 0.9798187016266003
+Updating edge: laptop on desk
+Updating edge: woman wearing glass
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: laptop on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 33
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8786124499971018
+Updating node desk_4f19 with desk and match confidence 0.8490223131321618
+Updating node bottle_8f26 with bottle and match confidence 0.9117459937547661
+Updating node paper_4874 with paper and match confidence 0.9912172675049508
+Updating node laptop_47af with laptop and match confidence 0.9084986528184407
+Updating node table_3879 with table and match confidence 0.8357054605320342
+Updating node screen_4a58 with screen and match confidence 0.9858210154731278
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: paper on desk
+Updating edge: laptop on table
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 34
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8702961960508329
+Updating node desk_4f19 with desk and match confidence 0.8430808581035145
+Updating node paper_4874 with paper and match confidence 0.9925510388285537
+Updating node bottle_8f26 with bottle and match confidence 0.9083081490118624
+Updating node laptop_47af with laptop and match confidence 0.906929889951055
+Updating node bottle_fe93 with bottle and match confidence 0.7285055348798164
+Updating node screen_4a58 with screen and match confidence 0.9864799287240691
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: laptop on desk
+Updating edge: bottle on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 35
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8832981324748577
+Updating node desk_4f19 with desk and match confidence 0.8482462311212192
+Updating node paper_4874 with paper and match confidence 0.9894939775839533
+Updating node bottle_8f26 with bottle and match confidence 0.9146898218758308
+Updating node screen_4a58 with screen and match confidence 0.9936869293677033
+Updating node laptop_47af with laptop and match confidence 0.9158642843047857
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: screen on laptop
+Updating edge: laptop on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 36
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8831462844766105
+Updating node desk_4f19 with desk and match confidence 0.8476884963496789
+Updating node paper_4874 with paper and match confidence 0.9968880324858816
+Updating node bottle_8f26 with bottle and match confidence 0.9193229969097259
+Updating node laptop_47af with laptop and match confidence 0.9115587053216061
+Updating node screen_4a58 with screen and match confidence 0.9925195707282501
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: laptop on desk
+Updating edge: screen on laptop
+Creating frame graph...
+-------------
+Inserting framegraph with id 37
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8820686811101441
+Updating node desk_4f19 with desk and match confidence 0.8497140855683558
+Updating node paper_4874 with paper and match confidence 0.9926145240262116
+Updating node bottle_8f26 with bottle and match confidence 0.9116691266605521
+Updating node screen_4a58 with screen and match confidence 0.9958069915049265
+Updating node laptop_47af with laptop and match confidence 0.9065529856894576
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: screen on laptop
+Updating edge: laptop on desk
+Creating frame graph...
+-------------
+Inserting framegraph with id 38
+-------------
+Updating node laptop_c69c with laptop and match confidence 0.8665548532463998
+Updating node desk_4f19 with desk and match confidence 0.8474647273941702
+Updating node paper_4874 with paper and match confidence 0.9888784177210491
+Updating node bottle_8f26 with bottle and match confidence 0.9147431162290135
+Updating node screen_4a58 with screen and match confidence 0.98623137496228
+Updating node laptop_47af with laptop and match confidence 0.9132079553174242
+Updating edge: laptop on desk
+Updating edge: paper on desk
+Updating edge: bottle on desk
+Updating edge: screen on laptop
+Updating edge: laptop on desk
