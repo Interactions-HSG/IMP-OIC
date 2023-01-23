@@ -163,10 +163,10 @@ class TemporalGraph:
         stories = []
         for n1, n2 in self.g.edges:
             relations = self.g[n1][n2]["relations"]
-            for (frame, relation) in relations.items():
-                relation_text = convert_to_text(relation)
-                story = f"{n2} {relation_text} {n1} in frame {frame}. "
-                stories.append(story)
+            frame, relation = list(relations.items())[0]
+            relation_text = convert_to_text(relation)
+            story = f"{n2} {relation_text} {n1} in frame {frame}. "
+            stories.append(story)
         with open(export_path, "w") as file:
             file.write("".join(stories))
             file.close()

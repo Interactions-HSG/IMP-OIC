@@ -48,7 +48,7 @@ Run `python3 graphene.py --help` for synopsis on graphene
 - Optional: create conda environment or virtual environment with a Python version higher than 3.6
 - Run `pip3 install -r requirements.txt`
 - Download [Albert](https://tfhub.dev/tensorflow/lite-model/albert_lite_base/squadv1/metadata/1?lite-format=tflite) weights, rename them to `albert_metadata.tflite` and place them into `qa/ckpt`
-- Run `python3 server.py` and open `http://127.0.0.1:5000` in your browser
+- If the data2text export (done with `--text` in graphene) is `scene.txt` and the temporal graph plot (done with `--visual`) is `scene.png`, start the server with `python3 server.py ../out/scene.txt ../out/scene.png` and open _http://127.0.0.1:5000_ in your browser
 
 ## Data handling
 

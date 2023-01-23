@@ -9,7 +9,9 @@ class Bert:
 
     def answer(self, context, question):
         results = self.bert.answer(context, question)
-        return results.answers[0].text
+        if len(results.answers) > 0:
+            return results.answers[0].text
+        else: return ""
 
 
 class Inference:
