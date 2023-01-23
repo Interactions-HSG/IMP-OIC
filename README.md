@@ -22,17 +22,17 @@ _Note_: graphene can be used within the same environment as the Scene Graph.
 
 - Run `pip3 install -r requirements.txt`
 
-For example, to run graphene on raw images, use
+- For example, to run graphene on raw images, use
 ```
 python3 graphene.py --img_path eval/img/airport
 ```
 
-To have a data2text export of the temporal graph
+- To have a data2text export of the temporal graph
 ```
 python3 graphene.py --img_path eval/img/airport --text graph2text.txt --visual tg.png
 ```
 
-Or if you already have created graphs, use
+- Or if you already have created graphs, use
 ```
 python3 graphene.py --graph_path eval/reltr/airport --text graph2text.txt --visual tg.png
 ```
@@ -62,6 +62,25 @@ python3 utils/extractframes.py path_to_video frames_per_second
 ### Demo data
 
 We provide demo images and preprocessed frame graphs (to be used with `--graph_path` option) in `eval/img` and `eval/reltr`, respectively.
+
+## Directory structure
+
+```
+IMP-OIC
+| 
+└───dataset (Helper files to train RelTR)
+└───eval
+|  └───img (Images for evaluation)
+|  └───reltr (Completed scene graph from RelTR, can be used with --graph-path)
+|  └───vid (Original videos, can be converted to frames with extractframes.py)
+|  └───yolo (YOLO classification results)
+└───inference (Language model QA)
+└───out (Generated for results)
+└───RelTR (Submodule)
+└───structures (Datastructures for the symbolic link)
+└───utils (Helper files)
+... 
+```
 
 ## Common errors
 
