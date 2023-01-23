@@ -120,7 +120,7 @@ def main(args):
         graphene.generate_temporal_graph_frames(graph_path, args.img_path)
     if args.graph_path:
         graph_path = args.graph_path
-        graphene.generate_temporal_graph_frames(graph_path, "eval/img/desk1")
+        graphene.generate_temporal_graph(graph_path)
 
     if args.visual:
         graphene.tg.to_plot(os.path.join(OUT_DIR, args.visual))
