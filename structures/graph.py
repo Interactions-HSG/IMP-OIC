@@ -206,7 +206,14 @@ class TemporalGraph:
         xmin, ymin = np.min(list(positions.values()), axis=0)
         xmax, ymax = np.max(list(positions.values()), axis=0)
 
-        for i, f in enumerate(self.frame_ids):
+        if len(self.frame_ids) > 10:
+            plot_ids = []
+            for i in range(self.frame_ids[0], len(self.frame_ids), 10):
+                plot_ids.append(self.frame_ids[i])
+        else:
+            plot_ids = self.frame_ids
+
+        for i, f in enumerate(plot_ids):
             # Plot the surface of frame f
             x = np.linspace(xmin, xmax, 10)
             y = np.linspace(ymin, ymax, 10)
