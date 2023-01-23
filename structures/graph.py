@@ -89,7 +89,7 @@ class TemporalGraph:
         self.g = nx.Graph()
         self.frame_ids = []
 
-    def insert_framegraph(self, framegraph, min_assignment_conf=0.1, alpha=0.3, verbose=False):
+    def insert_framegraph(self, framegraph, alpha, min_assignment_conf, verbose=False):
         '''
         Inserts a framegraph into the temporal graph by matching nodes when their similarity is above min_assignment_conf.
         Similarity is determined by alpha * neighbour similarity + (1-alpha) * spatial similarity
@@ -165,7 +165,7 @@ class TemporalGraph:
             relations = self.g[n1][n2]["relations"]
             for (frame, relation) in relations.items():
                 relation_text = convert_to_text(relation)
-                story = f"{n1} {relation_text} {n2} in frame {frame}. "
+                story = f"{n2} {relation_text} {n1} in frame {frame}. "
                 stories.append(story)
         with open(export_path, "w") as file:
             file.write("".join(stories))

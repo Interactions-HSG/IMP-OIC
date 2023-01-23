@@ -10,18 +10,19 @@ from cam import Camera
 TEMP_DIR = "temp"
 CAM_PATH = "cam"
 OUT_DIR = "out"
-min_assignment_conf = 0.6
 
 class Graphene:
     """
         Creates scene graphs on frames / images and can call temporal graph creation
     """
 
-    def __init__(self):
+    def __init__(self, alpha, min_assignment_conf):
         self.temp_dir = TEMP_DIR
         self.tg = TemporalGraph()
+        self.alpha = alpha
+        self.min_assignment_conf = min_assignment_conf
 
-    def run_online(self, min_confidence, alpha, graph2text):
+    def run_online(self, graph2text):
         if os.path.isdir(self.temp_dir):
             os.rmdir(self.temp_dir)
         os.mkdir(self.temp_dir)
@@ -38,7 +39,7 @@ class Graphene:
             frame_count += 1
             fg = FrameGraph()
             fg.create_graph(os.path.join(self.temp_dir, scenegraph_name))
-            self.tg.insert_framegraph(fg, min_confidence, alpha)
+            self.tg.insert_framegraph(fg, self.alpha, self.min_assignment_conf)
             if graph2text:
                 self.tg.to_text(os.path.join(OUT_DIR, graph2text))
 
@@ -69,7 +70,7 @@ class Graphene:
         for sg in scene_graphs:
             fg = FrameGraph(sg_count)
             fg.create_graph(scenegraphs_path + "/" + sg)
-            self.tg.insert_framegraph(fg, min_assignment_conf, verbose=True)
+            self.tg.insert_framegraph(fg, self.alpha, self.min_assignment_conf, verbose=True)
             sg_count += 1
             
     def generate_temporal_graph_frames(self, scenegraphs_path, image_path):
@@ -87,12 +88,12 @@ class Graphene:
         for sg, img in zip(scene_graphs, images):
             fg = FrameGraph(sg_count)
             fg.create_graph(os.path.join(scenegraphs_path, sg))
-            self.tg.insert_framegraph(fg, min_assignment_conf, verbose=True)
+            self.tg.insert_framegraph(fg, self.alpha, self.min_assignment_conf, verbose=True)
             self.tg.to_frame_plot(os.path.join(image_path, img), os.path.join(ann_path, str(sg_count)), sg_count)
             sg_count += 1
 
 
-def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=7):
+def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=5):
     """
     calls RelTR to create scene graph from image and saves json output file in graph path
     """
@@ -106,12 +107,12 @@ def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=7)
 
 
 def main(args):
-    graphene = Graphene()
+    graphene = Graphene(args.alpha, args.min_confidence)
 
     if not os.path.isdir(OUT_DIR):
         os.mkdir(OUT_DIR)
     if args.cam:
-        graphene.run_online(args.min_confidence, args.alpha, args.text)
+        graphene.run_online(args.text)
         return
     if args.img_path:
         graphene.classify_images(args.img_path)
@@ -119,7 +120,7 @@ def main(args):
         graphene.generate_temporal_graph_frames(graph_path, args.img_path)
     if args.graph_path:
         graph_path = args.graph_path
-        graphene.generate_temporal_graph(graph_path)
+        graphene.generate_temporal_graph_frames(graph_path, "eval/img/desk1")
 
     if args.visual:
         graphene.tg.to_plot(os.path.join(OUT_DIR, args.visual))
@@ -139,7 +140,7 @@ if __name__ == "__main__":
                         help="Run graphene on webcam")
     parser.add_argument("--text", type=str,
                         help="Export graph as natural language text for language model inference under this path")
-    parser.add_argument("--min_confidence", type=float, default=0.1,
+    parser.add_argument("--min_confidence", type=float, default=0.6,
                         help="The minimum confidence required to match an object from one frame to the next")
     parser.add_argument("--alpha", type=float, default=0.3,
                         help="Sets similarity metrics as alpha * neighbour similarity + (1-alpha) * spatial similarity")
