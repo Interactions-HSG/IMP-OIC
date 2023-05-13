@@ -1,7 +1,7 @@
 import sys
 import openai
 openai.organization = "org-bOaL53AMHfnPzifP0AcjW2Fg"
-openai.api_key = "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"
+openai.api_key = "API-key"
 models = openai.Model.list()
 
 def run_gpt(context, question):
