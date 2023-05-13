@@ -1,7 +1,10 @@
 import sys
 import openai
+import configparser
+config = configparser.ConfigParser()
+config.read('../config.ini')
 openai.organization = "org-bOaL53AMHfnPzifP0AcjW2Fg"
-openai.api_key = "API-key"
+openai.api_key = config['DEFAULT']['open_ai_api_key']
 models = openai.Model.list()
 
 def run_gpt(context, question):
