@@ -133,3 +133,9 @@ dmypy.json
 .pyre/
 
 .idea/workspace.xml
+__pycache__
+temp/
+out/
+eval/
+desk/
+.DS_Store
