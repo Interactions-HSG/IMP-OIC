@@ -139,3 +139,7 @@ out/
 eval/
 desk/
 .DS_Store
+
+testing/
+temp/
+cam/
