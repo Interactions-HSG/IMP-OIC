@@ -59,6 +59,61 @@ class Graphene:
             generate_scene_graph("RelTR", image_path + "/" + image,
                                  self.temp_dir + "/" + "%03d"%image_count + ".json")
             image_count += 1
+    
+    def classify_images_window(self, image_path, window_size):
+        """
+        For all frames (images) in input folder, call scene graph generator
+        """
+
+        if os.path.isdir(self.temp_dir):
+            os.rmdir(self.temp_dir)
+        os.mkdir(self.temp_dir)
+        
+        if os.path.isdir(image_path + "/img"):
+            os.rmdir(image_path + "/img")
+        os.mkdir(image_path + "/img")
+
+        if os.path.isdir(image_path + "/img/JSON"):
+            os.rmdir(image_path + "/img/JSON")
+        os.mkdir(image_path + "/img/JSON")
+
+        images = sorted(os.listdir(image_path))
+        images = inout.clean_img_list(images)
+
+        print("generating scene graphs:")
+        for image_count, image in enumerate( tqdm.tqdm(images)):
+            generate_scene_graph("RelTR", image_path + "/" + image,self.temp_dir + "/" + "%03d"%image_count + ".json")
+
+        tmp_graphs = sorted(os.listdir(self.temp_dir))
+        tmp_graphs = inout.clean_json_list(tmp_graphs)
+
+        #combine tmp graphs into one graph per window. this will include duplictes of objects and needs to be cleaned in tg construction
+        for graph_count, i in enumerate(range(0, len(tmp_graphs)//window_size)):
+            graph = []
+    
+            for j in range(i*window_size, (i+1)*window_size):
+                with open(self.temp_dir + "/" + tmp_graphs[j], "r") as file:
+                    triples = json.load(file)
+                    file.close()
+                graph += triples
+            with open(image_path + "/img/JSON/" + "%03d"%graph_count + ".json", "w") as file:
+                json.dump(graph, file)
+                file.close()
+        
+        print("copying images and cleaning up temporary files:")
+        for image_count, image in enumerate( tqdm.tqdm(images)):
+            #copy the middle image to img folder
+            if image_count%window_size == (window_size)//2:
+                # depending on your setup and OS replace the "copy /z" with "copy" for local windows directory and "cp" for linux and macOS  
+                print("copy" + " /z \"" + image_path + "/\"" + image + " \"" + image_path + "/img/" + image + "\"")
+                os.system("copy" + " /z \"" + image_path + "/\"" + image + " \"" + image_path + "/img/" + image + "\"")
+        
+        #clean up temporary files and folders, move all graph files to a JSON folder in the image_path
+        if os.path.isdir(image_path + "/JSON"):
+            os.rmdir(image_path + "/JSON")
+        os.replace(self.temp_dir, image_path + "/JSON")
+        
+        
 
     def generate_temporal_graph(self, scenegraphs_path):
         """
@@ -93,7 +148,7 @@ class Graphene:
             sg_count += 1
 
 
-def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=5):
+def generate_scene_graph(reltr_path, img_path, graph_path, device="cuda", topk=32):
     """
     calls RelTR to create scene graph from image and saves json output file in graph path
     """
@@ -114,6 +169,10 @@ def main(args):
     if args.cam:
         graphene.run_online(args.text)
         return
+    if args.img_path_window:
+        graphene.classify_images_window(args.img_path_window, args.window_size)
+        graph_path = args.img_path_window + "/img/JSON"
+        graphene.generate_temporal_graph_frames(graph_path, args.img_path_window + "/img")
     if args.img_path:
         graphene.classify_images(args.img_path)
         graph_path = TEMP_DIR
@@ -132,6 +191,10 @@ def main(args):
 if __name__ == "__main__":
     os.environ['MKL_THREADING_LAYER'] = 'GNU'  # Required on some machines for running tensorflow-cpu
     parser = argparse.ArgumentParser("graphene")
+    parser.add_argument("--img_path_window", type=str,
+                        help="Directory of existing images sets (.jpeg, .jpg, .png) for bulk processing")
+    parser.add_argument("--window_size", type=int, default=5,
+                        help="amount of frames in the window")
     parser.add_argument("--img_path", type=str,
                         help="Directory of existing images (.jpeg, .jpg, .png) for bulk processing")
     parser.add_argument("--graph_path", type=str,
