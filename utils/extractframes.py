@@ -4,16 +4,39 @@ import numpy as np
 import os
 import sys
 
+usage_hint = """
+    Description: Extracts frames or windows of consec frames from a video file using OpenCV and saves them as .jpg files in a folder with the same name as the video file.
+
+    Usage: python ./extractframes.py [Options] <path_to_video> <frames_per_second> <window_size>
+
+    Options:
+        -h, --help: Show this help message and exit
+
+    Arguments:
+        path_to_video: Path to the video file to extract frames from
+        frames_per_second: How many frames per second to save, if not given, defaults to 1 frame per second
+        window_size: Size of the Window to sample, if not given, defaults to 1 frame
+
+    Examples: 
+    [1]: Extracts 1 frames per second from the video.
+         $ python extractframes.py "C:/Users/username/Desktop/video.mp4"
+    [2]: Extracts 15 frames per second from the video.
+         $ python extractframes.py "C:/Users/username/Desktop/video.mp4" 15
+    [3]: Extracts 2 windows of frames per second from the video, with a window size of 5 frames.
+         $ python extractframes.py "C:/Users/username/Desktop/video.mp4" 2 5
+"""
+
 
 class FrameExtractor:
     """
         FrameExtractor that separates a video into separate frames using opencv library
     """
 
-    def __init__(self, fps_to_save, video_file):
+    def __init__(self, video_file, fps_to_save, window_size):
         # set fps to save, e.g. a video of 10 seconds with 10 fps saves 100 frames
-        self.frames_to_save_per_sec = fps_to_save
         self.video_file = video_file
+        self.frames_to_save_per_sec = fps_to_save
+        self.window_size = window_size
 
     def main(self):
         filename, _ = os.path.splitext(self.video_file)
@@ -25,16 +48,13 @@ class FrameExtractor:
         cap = cv2.VideoCapture(self.video_file)
         fps = cap.get(cv2.CAP_PROP_FPS)  # get original fps of video
 
-        saving_frames_per_second = min(fps, self.frames_to_save_per_sec)  # if video fps > our fps, set it to that
-        saving_frames_spots = get_saving_frames_spots(cap, saving_frames_per_second)
+        # check if the desired fps given the window size requires more frames than the source video can provide
+        saving_frames_per_second = min(fps//self.window_size, self.frames_to_save_per_sec)
+
+        saving_frames_spots = get_saving_frames_spots(cap, saving_frames_per_second, self.window_size)
 
         count = 0
         while True:
-            is_read, frame = cap.read()
-            if not is_read:
-                # no frames to read
-                break
-
             frame_duration = count / fps
             try:
                 closest_spot = saving_frames_spots[0]
@@ -42,15 +62,26 @@ class FrameExtractor:
                 break
 
             if frame_duration >= closest_spot:
-                formatted_frame_time = format_time(timedelta(seconds=frame_duration))
-                cv2.imwrite(os.path.join(filename, f"frame{formatted_frame_time}.jpg"), frame)
+                for i in range(self.window_size):
+                    count += 1
+                    is_read, frame = cap.read()
+                    if not is_read:
+                        # no more frames to read
+                        break
+                    formatted_frame_time = format_time(timedelta(seconds=frame_duration + i/fps))
+                    cv2.imwrite(os.path.join(filename, f"frame{formatted_frame_time}.jpg"), frame)
 
                 try:
                     saving_frames_spots.pop(0)
                 except IndexError:
                     pass
-
-            count += 1
+            else:
+                # discard all frames outside of the window
+                is_read, frame = cap.read()
+                if not is_read:
+                    # no more frames to read
+                    break
+                count += 1
 
 
 def format_time(td):
@@ -68,7 +99,7 @@ def format_time(td):
     return f"{result}.{ms:02}".replace(":", "-")
 
 
-def get_saving_frames_spots(cap, saving_fps):
+def get_saving_frames_spots(cap, saving_fps, size_window):
     """
         Takes the VideoCapture object from OpenCV and returns a list of duration spots on which to save the frames
     """
@@ -81,11 +112,18 @@ def get_saving_frames_spots(cap, saving_fps):
 
 
 if __name__ == "__main__":
-    """
-    First arg: path to video
-    Second arg: How many frames per second
-    """
-    video_file = sys.argv[1]
-    fps_to_save = int(sys.argv[2])
-    f = FrameExtractor(fps_to_save, video_file)
+    try:
+        if sys.argv[1] == "-h" or sys.argv[1] == "--help":
+            print(usage_hint)
+            exit(0)
+        # read arguments
+        video_file = sys.argv[1]
+        fps_to_save = int(sys.argv[2]) if len(sys.argv) > 2 else 1
+        win_size = int(sys.argv[3]) if len(sys.argv) > 3 else 1
+
+    except IndexError:
+        print(usage_hint)
+        exit(1)
+
+    f = FrameExtractor(video_file, fps_to_save, win_size)
     f.main()
