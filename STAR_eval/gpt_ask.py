@@ -11,9 +11,17 @@ def run_gpt(context, question):
     #with open(context) as f:
     #    context_lines = "".join(map(str,f.readlines())) 
     response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+                model="gpt-3.5-turbo-16k",
                 messages=[{"role": "system", "content": context},
                             {"role": "user", "content": question}
-                ])
+                ],
+                temperature=0.9,
+                max_tokens=1,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0)
 
     return response.choices[0].message.content
+
+if __name__ == "__main__":
+    print("\nResponse: {}".format(run_gpt(sys.argv[1], sys.argv[2])))

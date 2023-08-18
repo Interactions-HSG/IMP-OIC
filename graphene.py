@@ -6,6 +6,7 @@ import tqdm
 from structures.graph import *
 from utils import inout
 from cam import Camera
+import shutil
 
 TEMP_DIR = "temp"
 CAM_PATH = "cam"
@@ -105,8 +106,8 @@ class Graphene:
             #copy the middle image to img folder
             if image_count%window_size == (window_size)//2:
                 # depending on your setup and OS replace the "copy /z" with "copy" for local windows directory and "cp" for linux and macOS  
-                print("copy" + " /z \"" + image_path + "/\"" + image + " \"" + image_path + "/img/" + image + "\"")
-                os.system("copy" + " /z \"" + image_path + "/\"" + image + " \"" + image_path + "/img/" + image + "\"")
+                print(image_path + "/" + image, image_path + "/img/" + image)
+                shutil.copy(image_path + "/" + image, image_path + "/img/" + image)
         
         #clean up temporary files and folders, move all graph files to a JSON folder in the image_path
         if os.path.isdir(image_path + "/JSON"):
@@ -148,17 +149,24 @@ class Graphene:
             sg_count += 1
 
 
-def generate_scene_graph(reltr_path, img_path, graph_path, device="cuda", topk=32):
+def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=10):
     """
     calls RelTR to create scene graph from image and saves json output file in graph path
+    
+    change device = 'cuda' for using GPU
+    change topk vallue for finding more realtionships
     """
-    subprocess.check_output([f'python',
-                             f"{reltr_path}/mkgraph.py",
-                             "--img_path", f"{img_path}",
-                             "--device", f"{device}",
-                             "--resume", f"{reltr_path}/ckpt/checkpoint0149.pth",
-                             "--export_path", f"{graph_path}",
-                             "--topk", f"{topk}"])
+
+    try:
+      subprocess.check_output([f'python',
+                              f"{reltr_path}/mkgraph.py",
+                              "--img_path", f"{img_path}",
+                              "--device", f"{device}",
+                              "--resume", f"{reltr_path}/ckpt/checkpoint0149.pth",
+                              "--export_path", f"{graph_path}",
+                              "--topk", f"{topk}"])
+    except subprocess.SubprocessError as ex:
+      print(ex)
 
 
 def main(args):

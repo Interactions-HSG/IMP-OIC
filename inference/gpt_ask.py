@@ -2,19 +2,24 @@ import sys
 import openai
 import configparser
 config = configparser.ConfigParser()
-config.read('../config.ini')
+config.read('config.ini')
 openai.organization = "org-bOaL53AMHfnPzifP0AcjW2Fg"
 openai.api_key = config['DEFAULT']['open_ai_api_key']
 models = openai.Model.list()
 
 def run_gpt(context, question):
-    with open(context) as f:
-        context_lines = "".join(map(str,f.readlines())) 
-        response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "system", "content": context_lines},
-                                {"role": "user", "content": question}
-                    ])
+    #with open(context) as f:
+    #    context_lines = "".join(map(str,f.readlines())) 
+    response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo-16k",
+                messages=[{"role": "system", "content": context},
+                            {"role": "user", "content": question}
+                ],
+                temperature=0.9,
+                max_tokens=1535,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0)
 
     return response.choices[0].message.content
 
