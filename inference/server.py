@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request
-from qa import Inference
+# from qa import Inference
 import os
 import shutil
 import sys
+import gpt_ask
 
 app = Flask(__name__)
 app.config.update(SERVER_NAME='127.0.0.1:5000')
@@ -13,13 +14,24 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/results/', methods=['POST'])
+# @app.route('/results/', methods=['POST'])
+# def search_request():
+#     query = request.form["input"]
+#     if len(query.split(" ")) == 0:
+#         return index()
+
+#     answer = inference.infer(query)
+#     response = {"question": query, "answer": answer}
+#     return render_template('results.html', res=response)
+
+
+@app.route('/gpt3/', methods=['POST'])
 def search_request():
     query = request.form["input"]
     if len(query.split(" ")) == 0:
         return index()
 
-    answer = inference.infer(query)
+    answer = gpt_ask.run_gpt(graph2text, query)
     response = {"question": query, "answer": answer}
     return render_template('results.html', res=response)
 
@@ -27,7 +39,7 @@ def search_request():
 if __name__ == "__main__":
     graph2text = sys.argv[1]
     tg_plot = sys.argv[2]
-    inference = Inference(graph2text)
+    #inference = Inference(graph2text)
     if os.path.isfile(tg_plot):
         shutil.copy(tg_plot, "static/tg.png")
     app.run(debug=False)

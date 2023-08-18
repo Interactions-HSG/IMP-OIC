@@ -5,6 +5,7 @@ from mpl_toolkits.mplot3d.art3d import Line3DCollection
 from PIL import Image
 import uuid
 import numpy as np
+from collections import defaultdict
 
 import utils.plot
 from structures.scene import SceneObject
@@ -22,7 +23,7 @@ class FrameGraph:
         """
             Creates graph for a single frame
         """
-        similarity_tol = 0.3
+        similarity_tol = 0.5
 
         print("Creating frame graph...")
         with open(graph_path, "r") as file:
@@ -86,7 +87,7 @@ class FrameGraph:
 class TemporalGraph:
 
     def __init__(self):
-        self.g = nx.Graph()
+        self.g = nx.DiGraph()
         self.frame_ids = []
 
     def insert_framegraph(self, framegraph, alpha, min_assignment_conf, verbose=False):
@@ -159,16 +160,22 @@ class TemporalGraph:
 
 
     def to_text(self, export_path):
-        # For each entity, report what happened to it
-        stories = []
+        """
+        Writes the temporal graph to a text file, where each frame is a section and the frames and relations are listed in chronological order.
+        """
+        stories = defaultdict(list)
+        # print(self.g.edges(data=True)) 
+        # In the original code g was a nx.Graph and even though this object looks like a list of tuples, 
+        # it is an EdgeView a custom reportview object of networkx. For an EdgeView the in operator is implemented differently then for a list of tuples.
         for n1, n2 in self.g.edges:
             relations = self.g[n1][n2]["relations"]
-            frame, relation = list(relations.items())[0]
-            relation_text = convert_to_text(relation)
-            story = f"{n2} {relation_text} {n1} in frame {frame}. "
-            stories.append(story)
+            for frame, relation in list(relations.items()):
+                story = f"{n1} {relation} {n2}.\n"
+                stories[frame].append(story)
         with open(export_path, "w") as file:
-            file.write("".join(stories))
+            for frame in sorted(stories.keys()):
+                file.write(f"In frame {frame}:\n")
+                file.write("".join(stories[frame]))
             file.close()
 
     def to_frame_plot(self, img_path, export_path, frame_id):
