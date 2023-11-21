@@ -11,7 +11,7 @@ def run_gpt(context, question):
     #with open(context) as f:
     #    context_lines = "".join(map(str,f.readlines())) 
     response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo-16k",
+                model="gpt-4",
                 messages=[{"role": "system", "content": context},
                             {"role": "user", "content": question}
                 ],

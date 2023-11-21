@@ -21,7 +21,7 @@ def run_gpt(context, question, max_tokens):
     """
     
     response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo-16k",
+                model="gpt-4",
                 
                 messages=[{"role": "system", "content": context},
                             {"role": "user", "content": question}
@@ -55,7 +55,7 @@ def run_gpt_robot(context, positions, question, max_token):
     #answerformat="""Answerformat for your answer: {“axis”: 2, “speed”: 3, “duration”: 500} axis" :0 = move forward, "axis": 2 = turn right, "speed: 3" = move forward 25cm/sec or turning 180degree in 945ms"""
     #user_content = question + answerformat
     response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo-16k",
+                model="gpt-4",
                 messages=[{"role": "system", "content": context},
                             {"role": "system", "content" : positions}, #new
                             #{"role": "system", "content" : robot_spec},
