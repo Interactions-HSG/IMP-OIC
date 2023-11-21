@@ -7,6 +7,7 @@ from structures.graph import *
 from utils import inout
 from cam import Camera
 import shutil
+import time
 
 TEMP_DIR = "temp"
 CAM_PATH = "cam"
@@ -125,14 +126,20 @@ class Graphene:
         sg_count = 0
         for sg in scene_graphs:
             fg = FrameGraph(sg_count)
+            
             fg.create_graph(scenegraphs_path + "/" + sg)
+            start=time.time()
             self.tg.insert_framegraph(fg, self.alpha, self.min_assignment_conf, verbose=True)
+            end=time.time()
+            duration=end-start
+            print(duration)
             sg_count += 1
             
     def generate_temporal_graph_frames(self, scenegraphs_path, image_path):
         """
         Identical to generate_temporal_graph, but exports images with graph overlays
         """
+        framegraph_pre = None
         scene_graphs = sorted(os.listdir(scenegraphs_path))
         scene_graphs = inout.clean_json_list(scene_graphs)
         images = sorted(os.listdir(image_path))
@@ -144,20 +151,22 @@ class Graphene:
         for sg, img in zip(scene_graphs, images):
             fg = FrameGraph(sg_count)
             fg.create_graph(os.path.join(scenegraphs_path, sg))
-            self.tg.insert_framegraph(fg, self.alpha, self.min_assignment_conf, verbose=True)
-            self.tg.to_frame_plot(os.path.join(image_path, img), os.path.join(ann_path, str(sg_count)), sg_count)
+            start=time.time()
+            self.tg.insert_framegraph(fg, self.alpha, self.min_assignment_conf, framegraph_pre, verbose=True)
+            end=time.time()
+            n_t=str(end-start)
+            print("Temporalgraph population:"+ n_t)
+            self.tg.to_frame_plot(os.path.join(image_path, img), os.path.join(ann_path, str(sg_count)), fg)
             sg_count += 1
+            framegraph_pre=fg
 
 
-def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=10):
+def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=8):
     """
     calls RelTR to create scene graph from image and saves json output file in graph path
-    
-    change device = 'cuda' for using GPU
-    change topk vallue for finding more realtionships
     """
-
     try:
+    
       subprocess.check_output([f'python',
                               f"{reltr_path}/mkgraph.py",
                               "--img_path", f"{img_path}",
@@ -167,7 +176,6 @@ def generate_scene_graph(reltr_path, img_path, graph_path, device="cpu", topk=10
                               "--topk", f"{topk}"])
     except subprocess.SubprocessError as ex:
       print(ex)
-
 
 def main(args):
     graphene = Graphene(args.alpha, args.min_confidence)

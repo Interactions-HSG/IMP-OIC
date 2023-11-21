@@ -138,4 +138,9 @@ temp/
 out/
 eval/
 desk/
-.DS_Store
+eval/.DS_Store
+STAR_eval/Charades
+STAR_eval/datatables*
+*.csv
+*.png
+.idea/

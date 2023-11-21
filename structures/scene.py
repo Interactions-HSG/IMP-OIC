@@ -1,3 +1,4 @@
+
 class SceneTriple():
 
     def __init__(self, subject_name, sxmin, symin, sxmax, symax, predicate, object_name, oxmin, oymin, oxmax, oymax):
@@ -5,14 +6,14 @@ class SceneTriple():
         self.predicate = predicate
         self.object = SceneObject(object_name, oxmin, oymin, oxmax, oymax)
 
-    @classmethod
+    
     def from_desc(cls, subject_name, predicate, object_name):
         return cls(
             subject_name, 0, 0, 0, 0,
             predicate,
             object_name, 0, 0, 0, 0
         )
-
+    
     def __hash__(self):
         """Should only check on S, P, O, but not other variables"""
         return hash((self.subject, self.predicate, self.object))
@@ -23,13 +24,18 @@ class SceneTriple():
 
 class SceneObject:
 
-    def __init__(self, name, xmin, ymin, xmax, ymax):
+    def __init__(self, name, xmin, ymin, xmax, ymax):      #added position
         self.name = name
         self.xmin = xmin
         self.ymin = ymin
         self.xmax = xmax
         self.ymax = ymax
+        self.pos = None
+        self.cuid = "hallo"
 
+    def get_cuid (self):
+        cui=str(self.cuid)
+        return cui
     @classmethod
     def from_centre(cls, name, centre_x, centre_y, w, h):
         return cls(

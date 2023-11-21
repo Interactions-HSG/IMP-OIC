@@ -28,11 +28,14 @@ def name_similarity(a, b):
     Returns graph with name similarities for fuzzy matching
     """
     if a == b:
+        #print("Name similarity =1")
         return 1
     else:
         if (a, b) in SIMILAR_NAMES.edges:
+            #print("Name similarity !=1")
             return SIMILAR_NAMES[a][b]["weight"]
         else:
+            #print("Name similarity =0")
             return 0
 
 
