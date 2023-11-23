@@ -27,7 +27,7 @@ class FrameGraph:
         """
         similarity_tol = 0.5
 
-        print("Creating frame graph...")
+        #print("Creating frame graph...")
         with open(graph_path, "r") as file:
             triples = json.load(file)
             file.close()
@@ -91,13 +91,12 @@ class FrameGraph:
 
 
 class TemporalGraph:
-    
+
     def __init__(self):
         self.g = nx.MultiDiGraph()
         self.frame_ids = []
         self.out_of_frame = set()
         self.leaf_node_id = {}
-        
 
     def calculate_similarity(self, alpha, f, t, framegraph):
         """
@@ -112,7 +111,7 @@ class TemporalGraph:
         Returns:
         float: The calculated similarity score.
         """
-        
+
         # Initialize neighbor similarity and neighbor matches count
         neigh_similarity = 0
         neighbor_matches = 0
@@ -131,18 +130,17 @@ class TemporalGraph:
 
         # Compare name similarity
         n_similarity = name_similarity(f.name, self.g.nodes[t]["content"].name)
-        
-        # Calculate the final similarity score 
-        similarity = (alpha * neigh_similarity + (1-alpha) * spat_similarity + n_similarity) / 2
-        return similarity
 
+        # Calculate the final similarity score 
+        similarity = (alpha * neigh_similarity + (1 - alpha) * spat_similarity + n_similarity) / 2
+        return similarity
 
     def insert_framegraph(self, framegraph, alpha, min_assignment_conf, framegraph_pre, verbose=False):
         """
             Update the graph by incorporating information from the provided framegraph.
         
             Parameters:
-            framegraph: A framegraph containing nodes and their relations.
+            framegraph: A framegraph containing nodes and their static_relationships.
             alpha (float): The weighting factor for neighbor similarity (0 <= alpha <= 1).
             min_assignment_conf (float): Minimum similarity threshold for assigning a node.
             verbose (bool, optional): Print additional information if True. Default is False.
@@ -151,124 +149,121 @@ class TemporalGraph:
         fg_nodes = framegraph.g.nodes
         # Update the set of nodes in the graph
         G = set(self.g.nodes)
-         #   G.update(self.out_of_frame)
-        relations={'has', 'attached to', 'covering', 'growing on', 'hanging from', 'made of', 'on', 'painted on', 'part of', 'sitting on', 'standing on', 'wearing', 'wears'}
-        update_nodes = set()   # Set with nodes that need to be updated
+        #   G.update(self.out_of_frame)
+        static_relationships = {'has', 'attached to', 'covering', 'growing on', 'hanging from', 'made of', 'on', 'painted on',
+                     'part of', 'sitting on', 'standing on', 'wearing', 'wears'}
+        update_nodes = set()  # Set with nodes that need to be updated
         Bestmatch = {}
         for f in fg_nodes:
             max_similarity = -1
             # Calculate similarity for each node in the graph
             for g in G:
-                #print(g)
+                # print(g)
                 similarity = self.calculate_similarity(alpha, f, g, framegraph)
-                if max_similarity<similarity:
-                    max_similarity=similarity
-                    #print(g)
+                if max_similarity < similarity:
+                    max_similarity = similarity
+                    # print(g)
                     if g not in Bestmatch:
-                        Bestmatch[f]=g            # Assign a node if similarity exceeds the minimum assignment confidence
+                        Bestmatch[f] = g  # Assign a node if similarity exceeds the minimum assignment confidence
             if max_similarity > min_assignment_conf:
                 cui = self.g.nodes[Bestmatch[f]]["content"].get_cuid()
-                framegraph.g.nodes[f]["content"].cuid=cui
-                content=framegraph.g.nodes[f]["content"]
+                framegraph.g.nodes[f]["content"].cuid = cui
+                content = framegraph.g.nodes[f]["content"]
                 self.g.nodes[Bestmatch[f]]["content"] = content
                 update_nodes.add(cui)
                 self.leaf_node_id[str(cui)] = f
             else:
-                flag=False
+                flag = False
                 if framegraph_pre != None:
                     edges = list(framegraph.g.out_edges(f, data=True)) + list(framegraph.g.in_edges(f, data=True))
                     for node1, node2, data in edges:
-                        if data["relation"] in relations:
-                            if framegraph.g.nodes[node1]["content"].cuid in self.g.nodes():# and self.leaf_node_id[node1.cuid] in self.g.nodes():
-                                if node2.name==self.g.nodes[Bestmatch[node2]]["content"].name:
+                        if data["relation"] in static_relationships:
+                            if framegraph.g.nodes[node1]["content"].cuid in self.g.nodes():  # and self.leaf_node_id[node1.cuid] in self.g.nodes():
+                                if node2.name == self.g.nodes[Bestmatch[node2]]["content"].name:
                                     cui = self.g.nodes[Bestmatch[f]]["content"].get_cuid()
-                                    framegraph.g.nodes[f]["content"].cuid=cui
-                                    content=framegraph.g.nodes[f]["content"]
+                                    framegraph.g.nodes[f]["content"].cuid = cui
+                                    content = framegraph.g.nodes[f]["content"]
                                     self.g.nodes[Bestmatch[f]]["content"] = content
                                     update_nodes.add(cui)
                                     self.leaf_node_id[str(cui)] = f
-                                    flag=True
+                                    flag = True
                                     break
                             elif framegraph.g.nodes[node2]["content"].cuid in self.g.nodes():
-                                if node1.name==self.g.nodes[Bestmatch[node1]]["content"].name:
+                                if node1.name == self.g.nodes[Bestmatch[node1]]["content"].name:
                                     cui = self.g.nodes[Bestmatch[f]]["content"].get_cuid()
-                                    framegraph.g.nodes[f]["content"].cuid=cui
-                                    content=framegraph.g.nodes[f]["content"]
+                                    framegraph.g.nodes[f]["content"].cuid = cui
+                                    content = framegraph.g.nodes[f]["content"]
                                     self.g.nodes[Bestmatch[f]]["content"] = content
                                     update_nodes.add(cui)
                                     self.leaf_node_id[str(cui)] = f
-                                    flag=True
+                                    flag = True
                                     break
                     if flag:
                         for node1, node2, data in framegraph.g.edges(f, data=True):
-                            if data["relation"] in relations:
-                                if framegraph.g.nodes[node2]["content"].get_cuid() in self.g.nodes(): 
-                                    if node1.name==self.g.nodes[Bestmatch[node1]]["content"].name:
-                                        cui=self.g.nodes[Bestmatch[node1]]["content"].get_cuid()
+                            if data["relation"] in static_relationships:
+                                if framegraph.g.nodes[node2]["content"].get_cuid() in self.g.nodes():
+                                    if node1.name == self.g.nodes[Bestmatch[node1]]["content"].name:
+                                        cui = self.g.nodes[Bestmatch[node1]]["content"].get_cuid()
                                         framegraph.g.nodes[node1]["content"].cuid = cui
                                         update_nodes.add(cui)
                                         self.leaf_node_id[str(cui)] = node1
                                 elif framegraph.g.nodes[node1]["content"].get_cuid() in self.g.nodes():
                                     if node2 in Bestmatch.keys():
-                                        if node2.name==self.g.nodes[Bestmatch[node2]]["content"].name:
-                                            cui=self.g.nodes[Bestmatch[node2]]["content"].get_cuid()
+                                        if node2.name == self.g.nodes[Bestmatch[node2]]["content"].name:
+                                            cui = self.g.nodes[Bestmatch[node2]]["content"].get_cuid()
                                             framegraph.g.nodes[node2]["content"].cuid = cui
                                             update_nodes.add(cui)
                                             self.leaf_node_id[str(cui)] = node2
                         continue
                 # Generate a unique identifier for the leaf node
-                print(flag)
+                #print(flag)
                 CUID = str(uuid.uuid4())[0:4]
                 unique_node_id = f"{f}_{CUID}"
-                
-                
-                framegraph.g.nodes[f]["content"].cuid=unique_node_id
-                content=framegraph.g.nodes[f]["content"]
-                  
+
+                framegraph.g.nodes[f]["content"].cuid = unique_node_id
+                content = framegraph.g.nodes[f]["content"]
+
                 # Add the node with its ID to the graph
                 self.g.add_node(unique_node_id, appearance_time=framegraph.frame_id)
                 nx.set_node_attributes(self.g, {unique_node_id: content}, 'content')
 
                 self.leaf_node_id[unique_node_id] = f
                 update_nodes.add(unique_node_id)
-                
-                
+
         # Update edges
         for u in update_nodes:
             edges = list(framegraph.g.out_edges(self.leaf_node_id[u]))
             time = framegraph.frame_id
             for edge in edges:
-                n0, n1=edge
+                n0, n1 = edge
                 relation = framegraph.g[n0][n1]['relation']
                 node1_cuid = framegraph.g.nodes[n0]["content"].cuid
-                node2_cuid = framegraph.g.nodes[n1]["content"].cuid    
-                if not self.g.has_edge(node1_cuid, node2_cuid) or (list(self.g[node1_cuid][node2_cuid].values())[-1]["relation"]==relation and int(list(self.g[node1_cuid][node2_cuid].values())[-1]["lastPresence"]<int(framegraph.frame_id-1))):
-                    self.g.add_edge(node1_cuid, node2_cuid, lastPresence= time, appearance_time = time, relation=relation )
-            edges_to_add = set()       
-            edges=self.g.out_edges(u)
+                node2_cuid = framegraph.g.nodes[n1]["content"].cuid
+                if not self.g.has_edge(node1_cuid, node2_cuid) or (
+                        list(self.g[node1_cuid][node2_cuid].values())[-1]["relation"] == relation and int(
+                        list(self.g[node1_cuid][node2_cuid].values())[-1]["lastPresence"] < int(
+                                framegraph.frame_id - 1))):
+                    self.g.add_edge(node1_cuid, node2_cuid, lastPresence=time, appearance_time=time, relation=relation)
+            edges_to_add = set()
+            edges = self.g.out_edges(u)
             for edge in edges:
-                n0, n1=edge
+                n0, n1 = edge
                 if framegraph.g.has_edge(self.leaf_node_id[n0], self.leaf_node_id[n1]):
-                    relation = framegraph.g[self.leaf_node_id[n0]][self.leaf_node_id[n1]]['relation']  
+                    relation = framegraph.g[self.leaf_node_id[n0]][self.leaf_node_id[n1]]['relation']
                     keys_to_modify = set()
-                    keys=self.g[n0][n1]
+                    keys = self.g[n0][n1]
                     for key in keys:
                         edge_data = self.g[n0][n1][key]
-                        if edge_data["relation"]==relation and int(edge_data["lastPresence"])==int(framegraph.frame_id-1):
+                        if edge_data["relation"] == relation and int(edge_data["lastPresence"]) == int(
+                                framegraph.frame_id - 1):
                             keys_to_modify.add(key)
                             break
                     for key in keys_to_modify:
                         self.g[n0][n1][key]["lastPresence"] = framegraph.frame_id
-                    
-            for n0, n1, relation in edges_to_add: 
-                self.g.add_edge(n0, n1, lastPresence= time, appearance_time = time, relation=relation)
-            
-            
-            
 
-             
-       
-                
+            for n0, n1, relation in edges_to_add:
+                self.g.add_edge(n0, n1, lastPresence=time, appearance_time=time, relation=relation)
+
     def to_text(self, export_path):
         """
         Export a textual representation of the scene based on edge         
@@ -277,56 +272,69 @@ class TemporalGraph:
         Parameters:
         export_path (str): The file path to save the exported text.
         """
-    
-        timestep=1 #in seconds
-        timepoint=0
-        G=self.g    #Graph
-        
+
+        timestep = 1  # in seconds
+        timepoint = 0
+        G = self.g  # Graph
+
         # Sort edges based on appearance and disappearance times
         sorted_edges_appearance = list(sorted(G.edges(data=True), key=lambda x: x[2]['appearance_time']))
-        sorted_edges_disappearance = list(sorted(G.edges(data=True), key=lambda x: x[2]['lastPresence']))
+        # sorted_edges_disappearance = list(sorted(G.edges(data=True), key=lambda x: x[2]['lastPresence']))
 
         with open(export_path, 'w') as file:
-                file.write(f"At the beginning of the scene:\n")
-                while True:
-                    sorted_edges_disappearance_rem = []
-                    sorted_edges_appearance_rem = []
-                    
-                    # Process edges based on appearance time
-                    for edge in sorted_edges_appearance:
-                        n1, n2, data = edge
-                        appearance_time = data.get('appearance_time')
-                        #print("AppTime:"+str(appearance_time))
-                        if appearance_time == timepoint:
-                            relation=data.get('relation')
-                            file.write(f"{n1} {relation} {n2}\n")
-                            sorted_edges_appearance_rem.append(edge)
-                        else:
-                            break
-                        
-                    # Process edges based on disappearance time
-                    
-                    for edge in sorted_edges_disappearance:
-                        n1, n2, data = edge
-                        disappearance_time = data.get('lastPresence')
-                        #print("DisTime:"+ str(disappearance_time))
-                        if disappearance_time == timepoint:
-                            relation=data.get('relation', None)
-                            #file.write(f"{n1} {relation} {n2} is not longer actual.\n")   
-                            sorted_edges_disappearance_rem.append(edge)
-                        else:                         
-                            break
-                    
-                    # Remove processed edges
-                    sorted_edges_appearance = [item for item in sorted_edges_appearance if item not in sorted_edges_appearance_rem]
-                    sorted_edges_disappearance = [item for item in sorted_edges_disappearance if item not in sorted_edges_disappearance_rem] 
+            file.write(f"The scene opens with ")
+            while True:
+                # sorted_edges_disappearance_rem = []
+                sorted_edges_appearance_rem = []
 
-                    if len(sorted_edges_appearance)==0 and len(sorted_edges_disappearance)==0:
-                        file.write(f"The scene ends \n")
-                        file.close()
+                # Process edges based on appearance time
+                for edge in sorted_edges_appearance:
+                    n1, n2, data = edge
+                    appearance_time = data.get('appearance_time')
+                    # print("AppTime:"+str(appearance_time))
+                    if appearance_time == timepoint:
+                        relation = data.get('relation')
+                        file.write(f"{n1} {relation} {n2}\n")
+                        sorted_edges_appearance_rem.append(edge)
+                        rel_entered = True
+                    else:
                         break
-                    timepoint+=1
-                    file.write(f"After {timepoint*timestep} seconds:\n")
+
+                # Process edges based on disappearance time
+
+                # for edge in sorted_edges_disappearance:
+                #    n1, n2, data = edge
+                #    disappearance_time = data.get('lastPresence')
+                    # print("DisTime:"+ str(disappearance_time))
+                #    if disappearance_time == timepoint:
+                #        relation = data.get('relation', None)
+                        # file.write(f"{n1} {relation} {n2} is not longer actual.\n")
+                #        sorted_edges_disappearance_rem.append(edge)
+                #    else:
+                #        break
+
+                # Remove processed edges
+                # sorted_edges_appearance = [item for item in sorted_edges_appearance if
+                #                           item not in sorted_edges_appearance_rem]
+                # sorted_edges_disappearance = [item for item in sorted_edges_disappearance if
+                #                              item not in sorted_edges_disappearance_rem]
+
+                # if len(sorted_edges_appearance) == 0 and len(sorted_edges_disappearance) == 0:
+                    #  file.write(f"The scene ends \n")
+                #    file.close()
+                #    break
+                # Remove processed edges
+                sorted_edges_appearance = [item for item in sorted_edges_appearance if
+                                           item not in sorted_edges_appearance_rem]
+                # sorted_edges_disappearance = [item for item in sorted_edges_disappearance if
+                #                              item not in sorted_edges_disappearance_rem]
+                timepoint += 1
+                if len(sorted_edges_appearance) == 0:
+                    # file.write(f"The scene ends \n")
+                    file.close()
+                    break
+                else:
+                    file.write(f"After {timepoint * timestep} seconds:\n")
 
     def to_frame_plot(self, img_path, export_path, framegraph):
         """
@@ -336,7 +344,7 @@ class TemporalGraph:
         im = plt.imread(img_path)
         ax.imshow(im)
         ax.set_axis_off()
-        
+
         for n in framegraph.g.nodes:
             o = framegraph.g.nodes[n]["content"]
             oxcentre = o.xmin + (o.xmax - o.xmin) / 2
@@ -384,20 +392,23 @@ class TemporalGraph:
             for n1, n2 in self.g.edges:
                 if f in self.g[n1][n2]["relations"].keys():  # Check whether edge (n1, n2) exists in frame f
                     graph_segments.append(((*positions[n1], i), (*positions[n2], i)))
-            ax.add_collection3d(Line3DCollection(graph_segments, color="k", alpha=0.5, linestyle="-", linewidth=0.5, zorder=2))
+            ax.add_collection3d(
+                Line3DCollection(graph_segments, color="k", alpha=0.5, linestyle="-", linewidth=0.5, zorder=2))
 
             # Plot nodes
             time_segments = []
             for n in self.g.nodes:
                 if f in self.g.nodes[n]["frames"]:  # Check whether node n exists in frame f
                     ax.scatter(*positions[n], i, color=node2color[n], s=50, zorder=3)
-                    ax.text(*positions[n], i, n, fontsize='xx-small', horizontalalignment='center', verticalalignment='center', zorder=100)
+                    ax.text(*positions[n], i, n, fontsize='xx-small', horizontalalignment='center',
+                            verticalalignment='center', zorder=100)
                     # Draw edges between frames
                     if i != 0:
-                        prev_f = self.frame_ids[i-1]
-                        if prev_f in self.g.nodes[n]["frames"]: # if node existed in previous frame
-                            time_segments.append(((*positions[n], i-1), (*positions[n], i)))
-            ax.add_collection3d(Line3DCollection(time_segments, color="k", alpha=0.3, linestyle="--", linewidth=0.5, zorder=2))                  
+                        prev_f = self.frame_ids[i - 1]
+                        if prev_f in self.g.nodes[n]["frames"]:  # if node existed in previous frame
+                            time_segments.append(((*positions[n], i - 1), (*positions[n], i)))
+            ax.add_collection3d(
+                Line3DCollection(time_segments, color="k", alpha=0.3, linestyle="--", linewidth=0.5, zorder=2))
         plt.savefig(export_path, dpi=300, bbox_inches="tight")
 
 
@@ -417,6 +428,7 @@ def test_temporal_graph():
     tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
     utils.plot.draw_reltr_image("../eval/img/glass/1.png", "../eval/reltr/glass/1.json")
 
+
 def test_temporal_graph_to_text():
     fg1 = FrameGraph(1)
     fg1.create_graph("../eval/reltr/glass/0.json")
@@ -434,6 +446,7 @@ def test_temporal_graph_to_text():
 
     print(tg.to_text())
 
+
 def test_temporal_graph_to_plot():
     fg1 = FrameGraph(1)
     fg1.create_graph("../eval/reltr/glass/0.json")
@@ -450,7 +463,8 @@ def test_temporal_graph_to_plot():
     tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
 
     tg.to_plot("temporal.png")
-    
+
+
 def test_temporal_graph_to_frame_plot():
     fg1 = FrameGraph(1)
     fg1.create_graph("../eval/reltr/airport/0.json")
@@ -459,6 +473,7 @@ def test_temporal_graph_to_frame_plot():
     tg.insert_framegraph(fg1, 0.1, 0.3, verbose=True)
 
     tg.to_frame_plot("../eval/img/airport/4.jpg", "frameplot")
+
 
 if __name__ == "__main__":
     # g = FrameGraph(0)

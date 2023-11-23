@@ -144,3 +144,5 @@ STAR_eval/datatables*
 *.csv
 *.png
 .idea/
+config.ini
+
