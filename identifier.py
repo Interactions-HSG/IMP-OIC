@@ -1,4 +1,4 @@
-from utilities.inout import *
+from utils.inout import *
 
 # TODO: Think about not returning the target object itself
 def get_local_context(target_object, environment, epsilon=0.1):
