@@ -99,3 +99,12 @@ Note that weights have to be downloaded for RelTR (see installation instructions
 
 The ALBERT language model is dependent on the `tflite-support` library that requires a Python version newer than ~3.8 and is furthermore not available for Windows.
 Furthermore, it requires a metadata file (see installation instructions).
+
+
+### Run CUID demonstrators
+
+1. Depending on your processor (Intel or Apple Silicon), install the necessary dependencies by selecting the appropriate `requirements_*.txt` file provided in the repository.
+
+2. Add the `yolov8n.pt` model (trained on the COCO dataset) from [Ultralytics](https://docs.ultralytics.com/models/yolov8/#performance-metrics) and save it in the YOLOv8 folder.
+
+3. Use the `identity_exchange_sim.ipynb` notebook to run both the YOLO and OIC models for simulating empathy, based on our [formal model for object identification](https://d197for5662m48.cloudfront.net/documents/publicationstatus/243391/preprint_pdf/049bc3880fa0e35664ec056fa30a9e4a.pdf).
