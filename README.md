@@ -101,7 +101,7 @@ The ALBERT language model is dependent on the `tflite-support` library that requ
 Furthermore, it requires a metadata file (see installation instructions).
 
 
-### Run CUID demonstrators
+## Run CUID demonstrators
 
 1. Depending on your processor (Intel or Apple Silicon), install the necessary dependencies by selecting the appropriate `requirements_*.txt` file provided in the repository.
 
