@@ -10,9 +10,10 @@ import time
 from collections import defaultdict
 from structures.scene import SceneObject
 
-import utils.plot
+import utilities.plot
 from structures.definitions import name_similarity, convert_to_text
-from utils import plot
+from utilities import plot
+import pytest
 
 
 class FrameGraph:
@@ -27,7 +28,7 @@ class FrameGraph:
         """
         similarity_tol = 0.5
 
-        #print("Creating frame graph...")
+        # print("Creating frame graph...")
         with open(graph_path, "r") as file:
             triples = json.load(file)
             file.close()
@@ -37,17 +38,24 @@ class FrameGraph:
             pred = triple_dict["predicate"]
             obj = triple_dict["object"]
             # print("Got triple: subj = ", sub, " pred = ", pred, " obj = ", obj)
-            sub_obj = SceneObject(sub["id"], sub["xmin"], sub["ymin"], sub["xmax"], sub["ymax"])
-            obj_obj = SceneObject(obj["id"], obj["xmin"], obj["ymin"], obj["xmax"], obj["ymax"])
             predicate = pred["id"]
+            sub_obj = SceneObject(sub["id"], sub["xmin"], sub["ymin"], sub["xmax"], sub["ymax"], obj["id"], predicate)
+
+            obj_obj = SceneObject(obj["id"], obj["xmin"], obj["ymin"], obj["xmax"], obj["ymax"], sub["id"], predicate)
 
             # Get the closest nodes and add them to the graph
             graph_subj = self.get_closest_node(sub_obj, epsilon=similarity_tol)
             graph_obj = self.get_closest_node(obj_obj, epsilon=similarity_tol)
 
             # Set the positions in the nodes
-            graph_subj.pos = sub_obj.pos
-            graph_obj.pos = obj_obj.pos
+            graph_subj.pos_hist = sub_obj.pos_hist
+            graph_obj.pos_hist = obj_obj.pos_hist
+            graph_subj.size = sub_obj.size
+            graph_obj.size = obj_obj.size
+            graph_subj.size_m = sub_obj.size_m
+            graph_obj.size_m = obj_obj.size_m
+            graph_subj.relationships = sub_obj.relationships
+            graph_obj.relationships = obj_obj.relationships
 
             # Add nodes and edges
             self.g.add_node(graph_subj, content=sub_obj)
@@ -150,7 +158,10 @@ class TemporalGraph:
         # Update the set of nodes in the graph
         G = set(self.g.nodes)
         #   G.update(self.out_of_frame)
-        static_relationships = {'has', 'attached to', 'covering', 'growing on', 'hanging from', 'made of', 'on', 'painted on', 'part of', 'sitting on', 'wearing', 'wears'}
+        # static_relationships = {'has', 'attached to', 'covering', 'growing on', 'hanging from', 'made of', 'on',
+        #                        'painted on', 'part of', 'sitting on', 'wearing', 'wears'}
+        static_relationships = {'attached to', 'covering', 'growing on', 'hanging from', 'made of',
+                                'painted on', 'part of', 'sitting on', 'wears'}
         update_nodes = set()  # Set with nodes that need to be updated
         Bestmatch = {}
         for f in fg_nodes:
@@ -160,15 +171,17 @@ class TemporalGraph:
                 # print(g)
                 similarity = self.calculate_similarity(alpha, f, g, framegraph)
                 if max_similarity < similarity:
-                    max_similarity = similarity
+                    max_similarity = similarity  # Maximum similarity each f node can find in G
                     # print(g)
                     if g not in Bestmatch:
                         Bestmatch[f] = g  # Assign a node if similarity exceeds the minimum assignment confidence
+                        # Update bestmatch dictionary to select the higly matching G node
+            g = self.g.nodes
             if max_similarity > min_assignment_conf:
-                cui = self.g.nodes[Bestmatch[f]]["content"].get_cuid()
+                cui = g[Bestmatch[f]]["content"].get_cuid()  # Get best match g from G using Bestmatch[f]
                 framegraph.g.nodes[f]["content"].cuid = cui
                 content = framegraph.g.nodes[f]["content"]
-                self.g.nodes[Bestmatch[f]]["content"] = content
+                g[Bestmatch[f]]["content"] = content
                 update_nodes.add(cui)
                 self.leaf_node_id[str(cui)] = f
             else:
@@ -177,47 +190,48 @@ class TemporalGraph:
                     edges = list(framegraph.g.out_edges(f, data=True)) + list(framegraph.g.in_edges(f, data=True))
                     for node1, node2, data in edges:
                         if data["relation"] in static_relationships:
-                            if framegraph.g.nodes[node1]["content"].cuid in self.g.nodes():  # and self.leaf_node_id[node1.cuid] in self.g.nodes():
+                            if framegraph.g.nodes[node1][
+                                "content"].cuid in g():  # and self.leaf_node_id[node1.cuid] in g():
                                 if node2 in Bestmatch.keys():
-                                    if node2.name == self.g.nodes[Bestmatch[node2]]["content"].name:
-                                        cui = self.g.nodes[Bestmatch[f]]["content"].get_cuid()
+                                    if node2.name == g[Bestmatch[node2]]["content"].name:
+                                        cui = g[Bestmatch[f]]["content"].get_cuid()
                                         framegraph.g.nodes[f]["content"].cuid = cui
                                         content = framegraph.g.nodes[f]["content"]
-                                        self.g.nodes[Bestmatch[f]]["content"] = content
+                                        g[Bestmatch[f]]["content"] = content
                                         update_nodes.add(cui)
                                         self.leaf_node_id[str(cui)] = f
                                         flag = True
                                         break
-                            elif framegraph.g.nodes[node2]["content"].cuid in self.g.nodes():
+                            elif framegraph.g.nodes[node2]["content"].cuid in g():
                                 if node1 in Bestmatch.keys():
-                                    if node1.name == self.g.nodes[Bestmatch[node1]]["content"].name:
-                                        cui = self.g.nodes[Bestmatch[f]]["content"].get_cuid()
+                                    if node1.name == g[Bestmatch[node1]]["content"].name:
+                                        cui = g[Bestmatch[f]]["content"].get_cuid()
                                         framegraph.g.nodes[f]["content"].cuid = cui
                                         content = framegraph.g.nodes[f]["content"]
-                                        self.g.nodes[Bestmatch[f]]["content"] = content
+                                        g[Bestmatch[f]]["content"] = content
                                         update_nodes.add(cui)
                                         self.leaf_node_id[str(cui)] = f
                                         flag = True
                                         break
                     if flag:
                         for node1, node2, data in framegraph.g.edges(f, data=True):
-                            if framegraph.g.nodes[node2]["content"].get_cuid() in self.g.nodes():
+                            if framegraph.g.nodes[node2]["content"].get_cuid() in g():
                                 if node1 in Bestmatch.keys():
-                                    if node1.name == self.g.nodes[Bestmatch[node1]]["content"].name:
-                                        cui = self.g.nodes[Bestmatch[node1]]["content"].get_cuid()
+                                    if node1.name == g[Bestmatch[node1]]["content"].name:
+                                        cui = g[Bestmatch[node1]]["content"].get_cuid()
                                         framegraph.g.nodes[node1]["content"].cuid = cui
                                         update_nodes.add(cui)
                                         self.leaf_node_id[str(cui)] = node1
-                                elif framegraph.g.nodes[node1]["content"].get_cuid() in self.g.nodes():
+                                elif framegraph.g.nodes[node1]["content"].get_cuid() in g():
                                     if node2 in Bestmatch.keys():
-                                        if node2.name == self.g.nodes[Bestmatch[node2]]["content"].name:
-                                            cui = self.g.nodes[Bestmatch[node2]]["content"].get_cuid()
+                                        if node2.name == g[Bestmatch[node2]]["content"].name:
+                                            cui = g[Bestmatch[node2]]["content"].get_cuid()
                                             framegraph.g.nodes[node2]["content"].cuid = cui
                                             update_nodes.add(cui)
                                             self.leaf_node_id[str(cui)] = node2
                         continue
                 # Generate a unique identifier for the leaf node
-                #print(flag)
+                # print(flag)
                 CUID = str(uuid.uuid4())[0:4]
                 unique_node_id = f"{f}_{CUID}"
 
@@ -242,8 +256,8 @@ class TemporalGraph:
                 node2_cuid = framegraph.g.nodes[n1]["content"].cuid
                 if not self.g.has_edge(node1_cuid, node2_cuid) or (
                         list(self.g[node1_cuid][node2_cuid].values())[-1]["relation"] == relation and int(
-                        list(self.g[node1_cuid][node2_cuid].values())[-1]["lastPresence"] < int(
-                                framegraph.frame_id - 1))):
+                    list(self.g[node1_cuid][node2_cuid].values())[-1]["lastPresence"] < int(
+                        framegraph.frame_id - 1))):
                     self.g.add_edge(node1_cuid, node2_cuid, lastPresence=time, appearance_time=time, relation=relation)
             edges_to_add = set()
             edges = self.g.out_edges(u)
@@ -280,19 +294,35 @@ class TemporalGraph:
 
         # Sort edges based on appearance
         sorted_edges_appearance = list(sorted(G.edges(data=True), key=lambda x: x[2]['appearance_time']))
+        sorted_nodes = list(sorted(G.nodes(data=True), key=lambda x: "{}:{}".format(x[0], str(x[1]['content']))))
 
         with open(export_path, 'a+') as file:
             file.write(f"The scene opens with ")
-
             while True:
                 sorted_edges_appearance_rem = []
                 new_triple_text = []
                 # Process edges based on appearance time
                 for edge in sorted_edges_appearance:
+
                     n1, n2, data = edge
+                    # n1_content = G.nodes[n1]["content"]
+                    # n2_content = G.nodes[n2]["content"]
+
                     appearance_time = data.get('appearance_time')
                     if appearance_time <= timepoint * timestep:
                         relation = data.get('relation')
+
+                        '''for node in sorted_nodes:
+                            print(str(node))
+                            cuid, content = node
+                            if n1 == cuid and content.get('appearance_time') == appearance_time:
+                                n1_content = content.get('content')
+                                n1_pos = n1_content.get_pos()
+                            if n2 == cuid and content.get('appearance_time') == appearance_time:
+                                n2_content = content.get('content')
+                                n2_pos = n2_content.get_pos()
+                        '''
+
                         new_triple_text.append(f"{n1} {relation} {n2}")
                         sorted_edges_appearance_rem.append(edge)
                     else:
@@ -305,7 +335,26 @@ class TemporalGraph:
                                            item not in sorted_edges_appearance_rem]
 
                 timepoint += 1
+
                 if len(sorted_edges_appearance) == 0:
+                    '''Write CUID details'''
+
+                    if len(sorted_nodes) != 0:
+                        for node in sorted_nodes:
+                            cuid, content = node
+                            object = content.get('content')
+
+                            cuid_dict = {
+                                "type": object.get_type(),
+                                "positions": object.get_pos_history(),
+                                "size": object.get_size(),
+                                "size_in_meters": object.get_size_m(),
+                                "relationship": object.get_relationship()
+                            }
+
+                            file.write(
+                                f'{cuid} = "{str(cuid_dict)}"\n')
+
                     file.close()
                     break
                 else:
@@ -387,9 +436,10 @@ class TemporalGraph:
         plt.savefig(export_path, dpi=300, bbox_inches="tight")
 
 
+"""
 def test_temporal_graph():
     fg1 = FrameGraph(1)
-    fg1.create_graph("../eval/reltr/glass/0.json")
+    fg1.create_graph("../eval/reltr/glass/1.json")
 
     fg2 = FrameGraph(2)
     fg2.create_graph("../eval/reltr/glass/1.json")
@@ -401,12 +451,13 @@ def test_temporal_graph():
     tg.insert_framegraph(fg1, 0.1, 0.5, verbose=True)
     tg.insert_framegraph(fg2, 0.1, 0.5, verbose=True)
     tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
-    utils.plot.draw_reltr_image("../eval/img/glass/1.png", "../eval/reltr/glass/1.json")
+    utilities.plot.draw_reltr_image("../eval/img/glass/1.png", "../eval/reltr/glass/1.json")
+"""
 
 
 def test_temporal_graph_to_text():
     fg1 = FrameGraph(1)
-    fg1.create_graph("../eval/reltr/glass/0.json")
+    fg1.create_graph("../eval/reltr/glass/1.json")
 
     fg2 = FrameGraph(2)
     fg2.create_graph("../eval/reltr/glass/1.json")
@@ -415,16 +466,17 @@ def test_temporal_graph_to_text():
     fg3.create_graph("../eval/reltr/glass/2.json")
 
     tg = TemporalGraph()
-    tg.insert_framegraph(fg1, 0.1, 0.5, verbose=True)
-    tg.insert_framegraph(fg2, 0.1, 0.5, verbose=True)
-    tg.insert_framegraph(fg3, 0.1, 0.5, verbose=True)
+    tg.insert_framegraph(fg1, 0.1, 0.5, fg1, verbose=True)
+    tg.insert_framegraph(fg2, 0.1, 0.5, fg1, verbose=True)
+    tg.insert_framegraph(fg3, 0.1, 0.5, fg2, verbose=True)
 
-    print(tg.to_text())
+    print(tg.to_text("/Users/sanjivjha/Developer/CUID_OIC_Demonstrator/out/out.txt", 2, 3))
 
 
+"""
 def test_temporal_graph_to_plot():
     fg1 = FrameGraph(1)
-    fg1.create_graph("../eval/reltr/glass/0.json")
+    fg1.create_graph("../eval/reltr/glass/1.json")
 
     fg2 = FrameGraph(2)
     fg2.create_graph("../eval/reltr/glass/1.json")
@@ -449,11 +501,11 @@ def test_temporal_graph_to_frame_plot():
 
     tg.to_frame_plot("../eval/img/airport/4.jpg", "frameplot")
 
-
+"""
 if __name__ == "__main__":
     # g = FrameGraph(0)
     # g.test_frame_graph()
     # test_temporal_graph()
-    # test_temporal_graph_to_text()
+    test_temporal_graph_to_text()
     # test_temporal_graph_to_plot()
-    test_temporal_graph_to_frame_plot()
+    # test_temporal_graph_to_frame_plot()

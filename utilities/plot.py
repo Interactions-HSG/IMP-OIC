@@ -1,6 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from utils.inout import get_triples
+from utilities.inout import get_triples
 
 
 def draw_graph(g, path):

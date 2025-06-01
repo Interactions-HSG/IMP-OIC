@@ -129,3 +129,5 @@ webencodings==0.5.1
 websocket-client==1.7.0
 widgetsnbextension==4.0.10
 xgboost==2.0.3
+ultralytics
+pytest

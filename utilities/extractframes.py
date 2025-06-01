@@ -48,10 +48,15 @@ class FrameExtractor:
         cap = cv2.VideoCapture(self.video_file)
         print(self.video_file)
         fps = int(cap.get(cv2.CAP_PROP_FPS))  # get original fps of video
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        resolution = width * height
+        print(f"Resolution: {resolution}")
         print(fps)
         # check if the desired fps given the window size requires more frames than the source video can provide
         saving_frames_per_second = min(fps//self.window_size, self.frames_to_save_per_sec)
         #saving_frames_per_second = self.frames_to_save_per_sec
+
 
         print(saving_frames_per_second)
         saving_frames_spots = get_saving_frames_spots(cap, saving_frames_per_second, self.window_size)

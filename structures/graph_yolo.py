@@ -55,7 +55,7 @@ class FrameGraph:
             # Add nodes and edges
             self.g.add_node(graph_subj, content=sub_obj)
             self.g.add_node(graph_obj, content=obj_obj)
-            self.g.add_edge(graph_subj, graph_obj, relation="self")
+            self.g.add_edge(graph_subj, graph_obj, relation=predicate)
 
     def get_closest_node(self, subj, epsilon=0.3):
         """
@@ -119,14 +119,14 @@ class TemporalGraph:
         neigh_similarity = 0
         neighbor_matches = 0
         # Get the number of neighbors for the target element
-        # n_neighbours = len(self.g[t])
+        n_neighbours = len(self.g[t])
         # Calculate neighbor similarity
-        # if n_neighbours > 0:
-            # for nt in self.g[t]:
-                # for nf in framegraph.g[f]:
-                    # if self.g.nodes[nt]["content"].name == nf.name:
-                        # neighbor_matches += 1
-            # neigh_similarity = neighbor_matches / len(self.g[t])
+        if n_neighbours > 0:
+            for nt in self.g[t]:
+                for nf in framegraph.g[f]:
+                    if self.g.nodes[nt]["content"].name == nf.name:
+                        neighbor_matches += 1
+            neigh_similarity = neighbor_matches / len(self.g[t])
 
         # Compare bounding box similarity
         spat_similarity = f.box_similarity(self.g.nodes[t]["content"])
@@ -313,8 +313,8 @@ class TemporalGraph:
                     n1, n2, data = edge
                     appearance_time = data.get('appearance_time')
                     if appearance_time <= timepoint * timestep:
-                        # relation = data.get('relation')
-                        new_triple_text.append(f"{n1}")
+                        relation = data.get('relation')
+                        new_triple_text.append(f"{n1} {n2}")
                         sorted_edges_appearance_rem.append(edge)
                     else:
                         break
@@ -361,7 +361,6 @@ class TemporalGraph:
             cuid = framegraph.g.nodes[n]["content"].get_cuid()
             ax.annotate(cuid, (o.xmin, o.ymin), color="white")
         plt.savefig(export_path + ".png", dpi=200, bbox_inches="tight")
-        plt.close()
 
     def to_plot(self, export_path):
         """
