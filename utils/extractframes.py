@@ -46,15 +46,19 @@ class FrameExtractor:
             os.mkdir(filename)
 
         cap = cv2.VideoCapture(self.video_file)
-        fps = cap.get(cv2.CAP_PROP_FPS)  # get original fps of video
-
+        print(self.video_file)
+        fps = int(cap.get(cv2.CAP_PROP_FPS))  # get original fps of video
+        print(fps)
         # check if the desired fps given the window size requires more frames than the source video can provide
         saving_frames_per_second = min(fps//self.window_size, self.frames_to_save_per_sec)
+        #saving_frames_per_second = self.frames_to_save_per_sec
 
+        print(saving_frames_per_second)
         saving_frames_spots = get_saving_frames_spots(cap, saving_frames_per_second, self.window_size)
 
         count = 0
         while True:
+
             frame_duration = count / fps
             try:
                 closest_spot = saving_frames_spots[0]
@@ -82,6 +86,7 @@ class FrameExtractor:
                     # no more frames to read
                     break
                 count += 1
+        return int(saving_frames_per_second)
 
 
 def format_time(td):
@@ -106,9 +111,13 @@ def get_saving_frames_spots(cap, saving_fps, size_window):
     s = []
     # get duration with nr of frames divided by the number of fps
     clip_duration = cap.get(cv2.CAP_PROP_FRAME_COUNT) / cap.get(cv2.CAP_PROP_FPS)
-    for i in np.arange(0, clip_duration, 1 / saving_fps):
+    print(clip_duration)
+    for i in np.arange(0, clip_duration, 1 / saving_fps): #--- it saves more than the number of seconds frames for graph generation as the steps increase as saving_fps increase which is not neecessary as windowing helps retaining the CUIDs, 1 fps for saving also works.
+    #for i in np.arange(0, clip_duration, 1):
         s.append(i)
+    print(len(s))
     return s
+
 
 
 if __name__ == "__main__":

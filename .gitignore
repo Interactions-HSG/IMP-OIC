@@ -138,9 +138,11 @@ temp/
 out/
 eval/
 desk/
-.DS_Store
-
-testing/
-temp/
-cam/
-inference/
+eval/.DS_Store
+*.csv
+*.png
+*.xlsx
+*.json
+.idea/
+config.ini
+RelTR/

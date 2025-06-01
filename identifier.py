@@ -1,6 +1,6 @@
 from utils.inout import *
 
-# TODO: Think about not returning the target object itself
+
 def get_local_context(target_object, environment, epsilon=0.1):
     """
     Takes a single target object and all the objects in its environment.
@@ -21,7 +21,7 @@ def get_local_context(target_object, environment, epsilon=0.1):
     return context
 
 
-# TODO: Think about not returning the target triple itself
+
 def get_context_graph(target, environment, epsilon):
     """
     Takes a single target object and all environment triples.
