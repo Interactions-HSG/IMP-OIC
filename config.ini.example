@@ -1,0 +1,9 @@
+[DEFAULT]
+open_ai_api_key = key
+ppi = 96
+height_scale = 8.5
+width_scale = 9
+
+# tip: 
+# to remove warnings while calssifying frames using RelTR: --UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.warnings.warn(msg)
+# replace line 91 (pretrained=is_main_process(), norm_layer=FrozenBatchNorm2d)) in RelTR/models/boackbone.py with: weights='ResNet50_Weights.DEFAULT', norm_layer=FrozenBatchNorm2d)

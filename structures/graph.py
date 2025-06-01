@@ -312,7 +312,7 @@ class TemporalGraph:
                     if appearance_time <= timepoint * timestep:
                         relation = data.get('relation')
 
-                        '''for node in sorted_nodes:
+                        '''for node in sorted_nodes:s
                             print(str(node))
                             cuid, content = node
                             if n1 == cuid and content.get('appearance_time') == appearance_time:

@@ -4,7 +4,7 @@ import argparse
 import tqdm
 
 from structures.graph import *
-from utils import inout
+from utilities import inout
 from cam import Camera
 import shutil
 import time
