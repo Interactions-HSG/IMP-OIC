@@ -13,8 +13,8 @@ def predict(img_path, filename):
     boxes = results[0].boxes.xyxy.tolist()
     classes = results[0].boxes.cls.tolist()
     names = results[0].names
-    # if names[2] == "car":
-    #    names[2] = "vehicle"
+    if names[2] == "car":
+       names[2] = "vehicle"
     confidences = results[0].boxes.conf.tolist()
 
     prediction_result = []
